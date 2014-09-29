@@ -1,7 +1,7 @@
 #!/usr/bin/python
 #########################
 ## Example input to start: 
-## sudo ./electionBuster.py -f mitch -l mcconnell -y 2014 -e senate -s kentucky 
+## sudo ./electionBuster.py -f josh -l franklin -y 2014 -e senate -s pennsyltucky 
 ## 6 arguments are passed:
 ## 1: The first name of the candidate
 ## 2: The last name of the candidate
@@ -56,18 +56,23 @@ if (args.fileName) :
 
 # This assigns the position variable
 if (electionType == 'congress') or (electionType == 'congressional') : 
-	position = 'congressman'
+	position = 'congress'
+	altPosition = 'congressman'
 elif electionType == 'senate' : 
 	position = 'senator'
+	altPosition = 'senate'
 elif (electionType == 'governor') or (electionType == 'gubernatorial'): 
 	position = 'governor'
-	abbreviatedPosition = 'gov'
+	altPosition = 'gov'
 elif (electionType == 'president') or (electionType == 'presidential') : 
-	position = 'governor'
-	abbreviatedPosition = 'prez'
-	print abbreviatedPosition
+	position = 'president'
+	altPosition = 'prez'
+elif (electionType == 'mayoral') or (electionType == 'mayor') : 
+	position = 'mayor'
+	altPosition = 'mayoral'
 else : 
 	position = electionType
+	altPosition = electionType
 
 # Runs stringAndStrip on everything except fileName b/c that's used elsewhere
 fName = stringAndStrip(fName)
@@ -102,7 +107,7 @@ else :
 	print 'http://www.' + position + fName + lName + '.com'
 
 # This is the result output files
-# Make a unique filename based on data and time
+# Makes a unique filename based on data and time
 now = date.today()
 tempResults = 'results-' + fName + '-' + lName + str(now) + '.txt'
 
@@ -113,7 +118,7 @@ resultsFile.close()
 
 resultsFile = open(tempResults, "a")
 
-# Need a base alphabet for the mangling functions
+# Need a base alphabet for the first set of mangling functions
 alphabet = "abcdefghijklmnopqrstuvwxyz0123456789"
 vowels = "aeiouy"
 
@@ -127,15 +132,19 @@ def tryURL(url) :
 		try: 
 			#Open input URL
 			httpResponse = urlopen(url)
-			print "*********************************************************************************"
+			print "*********************************************************************"
 			print "Page Exists: " + httpResponse.geturl() + "."
-			print "*********************************************************************************"
-			confirmedURLs.append(url)
-			testedURLs.append(url)
 			print httpResponse.info()
 			print httpResponse.code
+			print "*********************************************************************"
+			confirmedURLs.append(url)
+			testedURLs.append(url)
+			resultsFile.write("*************************************************+" + "\n")
+			resultsFile.write("Page Exists: " + httpResponse.geturl() + "\n")
 			resultsFile.write(str(url) + ", " + str(httpResponse.code) + "\n")
-
+			resultsFile.write(str(httpResponse.info()) + "\n")
+			resultsFile.write("*************************************************+" + "\n")
+						
 		except HTTPError, e: 
 			print "HTTPError"
 			print e
@@ -295,7 +304,14 @@ if (args.state) :
 				 position + fName + lName, 
 				 position + '-' + fName + lName, 
 				 position + fName + '-' + lName, 
-				 position + '-' + fName + '-' + lName
+				 position + '-' + fName + '-' + lName,
+				 fName + lName + 'for' + altPosition, 
+				 fName + lName + '4' + altPosition, 
+				 fName + 'for' + altPosition,
+				 fName + '4' + altPosition,
+				 lName + 'for' + altPosition,
+				 lName + 'for' + position,
+				 lName + '4' + position
 				 ]
 else :  
 	templates = [
@@ -318,8 +334,14 @@ else :
 				 position + fName + lName, 
 				 position + '-' + fName + lName, 
 				 position + fName + '-' + lName, 
-				 position + '-' + fName + '-' + lName
-
+				 position + '-' + fName + '-' + lName,
+				 fName + lName + 'for' + altPosition, 
+				 fName + lName + '4' + altPosition, 
+				 fName + 'for' + altPosition,
+				 fName + '4' + altPosition,
+				 lName + 'for' + altPosition,
+				 lName + 'for' + position,
+				 lName + '4' + position
 				 ]
 
 # top-level domain-names
@@ -353,7 +375,7 @@ resultsDonate = genAllDonate( templates, alt_alphabets)
 #http://www.presidentjoshfranklin4president2014.com
 #http://www.presidentjosh-franklin4president2014.com
 
-print "Entering loop 1^^^^^^^^^^^^^^^^^^^^^^^^^^" 
+print "Entering template loop 1^^^^^^^^^^^^^^^^^^^^^^^^^^" 
 print time.time() - start_time, "seconds"
 for r in results:
 	r = stringAndStrip(r) 
@@ -369,7 +391,7 @@ for r in results:
 #http://www.donatejoshfranklin.com
 #http://wwwjoshfranklin.com
 
-print "Entering loop 2^^^^^^^^^^^^^^^^^^^^^^^^^^"
+print "Entering template loop 2^^^^^^^^^^^^^^^^^^^^^^^^^^"
 print "There were " + str(len(skippedURLs)) + " skipped so far."
 print time.time() - start_time, "seconds"
 for r in results:
@@ -393,7 +415,7 @@ for r in results:
 #http://www.joshfranklindonate.com
 #http://wwwjoshfranklindonate.com
 print "There were " + str(len(skippedURLs)) + " skipped so far."
-print "Entering loop 3^^^^^^^^^^^^^^^^^^^^^^^^^^" 
+print "Entering template loop 3^^^^^^^^^^^^^^^^^^^^^^^^^^" 
 print time.time() - start_time, "seconds"
 for r in resultsDonate:
 	r = stringAndStrip(r) 
@@ -412,11 +434,8 @@ for r in resultsDonate:
 	tryURL(urlnoperiod)
 
 # TODO: add an extra o to situations with two 'o's, like "book" to "boook"
-
-# TODO: if a word ends in 'es' such as in 'times', swap the 'es' to 'se'
-
 # TODO: try Rick for Richard etcetera 
-# TODO: Turn 2014 into 14 so we look for http://www.lName+fNname+14.com
+# TODO: Turn 2014 into 14 so we look for http://www.lName+fName+14.com
 
 ### NEW TYPO FUNCTIONS###
 # All examples use josh franklin 2014 president DC 
@@ -614,26 +633,72 @@ for r in reverseResults3 :
 		print 'Trying: ' + tempURL
 		tryURL(tempURL)
 
+### CORNER CASES ###
+# The following looks for odd domains that I've noticed 
+
+# This looks for 'teamfranklin'
+url = 'http://www.team' + fName
+url = stringAndStrip(url)
+print 'Trying: ' + url
+tryURL(url)
+
+url = 'http://www.team' + lName
+url = stringAndStrip(url)
+print 'Trying: ' + url
+tryURL(url)
+
+url = 'http://www.team' + fName + lName
+url = stringAndStrip(url)
+print 'Trying: ' + url
+tryURL(url)
+
+# This looks for 'repfranklin' 
+# It's easier just to include for everyone, even if they are not in a congressional race
+url = 'http://www.rep' + fName
+url = stringAndStrip(url)
+print 'Trying: ' + url
+tryURL(url)
+
+url = 'http://www.rep' + lName
+url = stringAndStrip(url)
+print 'Trying: ' + url
+tryURL(url)
+
+url = 'http://www.rep' + fName + lName
+url = stringAndStrip(url)
+print 'Trying: ' + url
+tryURL(url)
+
+# Wow! You've made it to the end. Well done! 
+
 totalRuntime = time.time() - start_time, "seconds"
 
-###### Write to logfile ###########
+###### Write final results to logfile ###########
 resultsFile.write("ElectionBuster Scan Results: " + "\n")
-resultsFile.write("Total run time was " + str(totalRuntime) + "\n")
+resultsFile.write("######################################" + "\n")
+resultsFile.write("INPUTS = " + str(fName) + ", " + str(lName) + ", " + str(year) + ", " + str(electionType) + "\n") 
+resultsFile.write("Total runtime was " + str(totalRuntime) + "\n")
+resultsFile.write("There were " + str(len(confirmedURLs)) + " positive results.")
+resultsFile.write("There were " + str(len(testedURLs)) + " unqiue URLs tested.")
 resultsFile.write("-------------------------------------" + "\n")
 resultsFile.write("Positive results: " + "\n")
 resultsFile.write("-------------------------------------" + "\n")
 for url in confirmedURLs:
 	resultsFile.write(str(url) + "\n")
 resultsFile.write("\n")
-resultsFile.write("There were " + str(len(confirmedURLs)) + " results tested:")
-resultsFile.write("-------------------------------------" + "\n")			
-for url in testedURLs:
-	resultsFile.write(str(url) + "\n")
+resultsFile.write("-------------------------------------" + "\n")
+resultsFile.write("EOF " + "\n")
 				
-###### Print results to screen ###########			
+###### Print final results to screen ###########			
 print "ElectionBuster Scan Results: " + "\n"
 print "###################################### " + "\n"
-print "Total run time was " + str(totalRuntime) + "\n"
+print "INPUTS"
+print "First name: " + fName + "\n"
+print "Last name: " + lName + "\n"
+print "Year: " + year + "\n"
+print "Election type: " + electionType + "\n"
+print "-------------------------------------" + "\n"
+print "Total runtime was " + str(totalRuntime) + "\n"
 print "-------------------------------------" + "\n"
 print "Positive results: " + "\n"
 print "There were " + str(len(confirmedURLs)) + " hits:"
@@ -641,10 +706,6 @@ print "-------------------------------------" + "\n"
 for url in confirmedURLs:
 	print url
 print "\n"
-
-#print "-------------------------------------" + "\n"
-#for url in testedURLs:
-#	print url
 
 #TODO: Parse goodResults.txt's pages and look for GoDaddy, Bluehost pages 
 #TODO: Take screenshots
