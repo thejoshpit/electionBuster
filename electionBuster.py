@@ -1,14 +1,14 @@
 #!/usr/bin/python
 #########################
+## Author: Josh Franklin
 ## Example input to start: 
 ## sudo ./electionBuster.py -f josh -l franklin -y 2014 -e senate -s pennsyltucky 
 ## 6 arguments are passed:
 ## 1: The first name of the candidate
 ## 2: The last name of the candidate
 ## 3: The year of the election
-## 4: The type of race, such as congress, senate, president 
-## 5: State
-## 6: A dictionary containing election related terms (Not yet implemented)
+## 4: The type of race (e.g., congress, senate, president)
+## 5: The state or region the candidate is from
 #########################
 
 import sys
@@ -637,34 +637,55 @@ for r in reverseResults3 :
 # The following looks for odd domains that I've noticed 
 
 # This looks for 'teamfranklin'
-url = 'http://www.team' + fName
+url = 'http://www.team' + fName + '.com'
 url = stringAndStrip(url)
 print 'Trying: ' + url
 tryURL(url)
 
-url = 'http://www.team' + lName
+url = 'http://www.team' + lName + '.com'
 url = stringAndStrip(url)
 print 'Trying: ' + url
 tryURL(url)
 
-url = 'http://www.team' + fName + lName
+url = 'http://www.team' + fName + lName + '.com'
 url = stringAndStrip(url)
 print 'Trying: ' + url
 tryURL(url)
 
 # This looks for 'repfranklin' 
 # It's easier just to include for everyone, even if they are not in a congressional race
-url = 'http://www.rep' + fName
+url = 'http://www.rep' + fName + '.com'
 url = stringAndStrip(url)
 print 'Trying: ' + url
 tryURL(url)
 
-url = 'http://www.rep' + lName
+url = 'http://www.rep' + lName + '.com'
 url = stringAndStrip(url)
 print 'Trying: ' + url
 tryURL(url)
 
-url = 'http://www.rep' + fName + lName
+url = 'http://www.rep' + fName + lName + '.com'
+url = stringAndStrip(url)
+print 'Trying: ' + url
+tryURL(url)
+
+#These next few look for some of the larger parties
+url = 'http://www.republican' + fName + lName + '.com'
+url = stringAndStrip(url)
+print 'Trying: ' + url
+tryURL(url)
+
+url = 'http://www.democrat' + fName + lName + '.com'
+url = stringAndStrip(url)
+print 'Trying: ' + url
+tryURL(url)
+
+url = 'http://www.libertarian' + fName + lName + '.com'
+url = stringAndStrip(url)
+print 'Trying: ' + url
+tryURL(url)
+
+url = 'http://www.independent' + fName + lName + '.com'
 url = stringAndStrip(url)
 print 'Trying: ' + url
 tryURL(url)
@@ -674,7 +695,7 @@ tryURL(url)
 totalRuntime = time.time() - start_time, "seconds"
 
 ###### Write final results to logfile ###########
-resultsFile.write("ElectionBuster Scan Results: " + "\n")
+resultsFile.write("ElectionBuster v5 Scan Results: " + "\n")
 resultsFile.write("######################################" + "\n")
 resultsFile.write("INPUTS = " + str(fName) + ", " + str(lName) + ", " + str(year) + ", " + str(electionType) + "\n") 
 resultsFile.write("Total runtime was " + str(totalRuntime) + "\n")
@@ -690,7 +711,7 @@ resultsFile.write("-------------------------------------" + "\n")
 resultsFile.write("EOF " + "\n")
 				
 ###### Print final results to screen ###########			
-print "ElectionBuster Scan Results: " + "\n"
+print "ElectionBuster v5 Scan Results: " + "\n"
 print "###################################### " + "\n"
 print "INPUTS"
 print "First name: " + fName + "\n"
