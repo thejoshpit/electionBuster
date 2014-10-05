@@ -5,9 +5,9 @@ This tool scans the URLs, and assocaited typos, of candidate election pages. Thi
 
 Example types of candidate URLs it looks for are:
 
-*http://www.joshfranklin.com
-*http://www.josh2014.com
-*http://www.franklin2014.com
+joshfranklin.com
+- http://www.josh2014.com
+-franklin2014.com
 *http://www.joshfranklin2014.com
 *http://www.joshfranklinforDC.com
 *http://www.joshfranklinDC.com
@@ -25,3 +25,6 @@ Example types of candidate URLs it looks for are:
 *http://www.presidentjosh-franklin4president2014.com
 
 The tool prints output to the screen, but also writes to a logfile. The resulting logfiles are often ~3-5 MB. 
+
+Problems:
+- Middle names and middle inititals cause problems. The program cant only take in first names and last names as valid inputs. I typically googled the individual with a middle name/initial to see if it is actually used in their marketing material. If it is, I tend to concatenate it with the last name. 
