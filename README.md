@@ -32,3 +32,5 @@ Problems:
 
 To do list:
 - Add in support for small elections such as councilmember, ward, and sheriff
+- Change runtime to seconds. 
+- Update version within code.
