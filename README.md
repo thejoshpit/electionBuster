@@ -8,10 +8,10 @@ Example types of candidate URLs it looks for are:
 ###http://www.joshfranklin.com
 #*http://www.josh2014.com
 *http://www.franklin2014.com
-#http://www.joshfranklin2014.com
-#http://www.joshfranklinforDC.com
+//http://www.joshfranklin2014.com
+*/http://www.joshfranklinforDC.com
 #http://www.joshfranklinDC.com
-#http://www.joshforpresident.com
+*/http://www.joshforpresident.com
 #http://www.josh4president.com
 #http://www.joshforpresident2014.com
 #http://www.josh4president2014.com
