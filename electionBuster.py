@@ -1,6 +1,6 @@
 #!/usr/bin/python
-#########################
-## Author: Josh Franklin
+##################################################
+## Author: Joshua Franklin
 ## Example input to start: 
 ## sudo ./electionBuster.py -f josh -l franklin -y 2014 -e senate -s pennsyltucky 
 ## 6 arguments are passed:
@@ -9,7 +9,7 @@
 ## 3: The year of the election
 ## 4: The type of race (e.g., congress, senate, president)
 ## 5: The state or region the candidate is from
-#########################
+##################################################
 
 import sys
 import time
@@ -695,12 +695,13 @@ tryURL(url)
 totalRuntime = time.time() - start_time, "seconds"
 
 ###### Write final results to logfile ###########
+resultsFile.write("######################################" + "\n")
 resultsFile.write("ElectionBuster v5 Scan Results: " + "\n")
 resultsFile.write("######################################" + "\n")
 resultsFile.write("INPUTS = " + str(fName) + ", " + str(lName) + ", " + str(year) + ", " + str(electionType) + "\n") 
 resultsFile.write("Total runtime was " + str(totalRuntime) + "\n")
-resultsFile.write("There were " + str(len(confirmedURLs)) + " positive results.")
-resultsFile.write("There were " + str(len(testedURLs)) + " unqiue URLs tested.")
+resultsFile.write("There were " + str(len(confirmedURLs)) + " positive results." + "\n")
+resultsFile.write("There were " + str(len(testedURLs)) + " unqiue URLs tested." + "\n")
 resultsFile.write("-------------------------------------" + "\n")
 resultsFile.write("Positive results: " + "\n")
 resultsFile.write("-------------------------------------" + "\n")
@@ -711,9 +712,10 @@ resultsFile.write("-------------------------------------" + "\n")
 resultsFile.write("EOF " + "\n")
 				
 ###### Print final results to screen ###########			
+print "###################################### " + "\n"
 print "ElectionBuster v5 Scan Results: " + "\n"
 print "###################################### " + "\n"
-print "INPUTS"
+print "INPUTS" + "\n"
 print "First name: " + fName + "\n"
 print "Last name: " + lName + "\n"
 print "Year: " + year + "\n"
@@ -722,7 +724,7 @@ print "-------------------------------------" + "\n"
 print "Total runtime was " + str(totalRuntime) + "\n"
 print "-------------------------------------" + "\n"
 print "Positive results: " + "\n"
-print "There were " + str(len(confirmedURLs)) + " hits:"
+print "There were " + str(len(confirmedURLs)) + " hits:" + "\n"
 print "-------------------------------------" + "\n"
 for url in confirmedURLs:
 	print url
