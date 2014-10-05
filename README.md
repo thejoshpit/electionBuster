@@ -12,8 +12,8 @@ Example types of candidate URLs it looks for are:
 */http://www.joshfranklinforDC.com
 #http://www.joshfranklinDC.com
 */http://www.joshforpresident.com
-#http://www.josh4president.com
-#http://www.joshforpresident2014.com
+http://www.josh4president.com
+www.joshforpresident2014.com
 #http://www.josh4president2014.com
 #http://www.presidentjoshfranklin.com
 #http://www.president-josh-franklin.com
