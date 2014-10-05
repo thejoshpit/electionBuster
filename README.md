@@ -28,3 +28,5 @@ The tool prints output to the screen, but also writes to a logfile. The resultin
 
 Problems:
 - Middle names and middle inititals cause problems. The program cant only take in first names and last names as valid inputs. I typically googled the individual with a middle name/initial to see if it is actually used in their marketing material. If it is, I tend to concatenate it with the last name. 
+- Non-standard and non-english special characters cause problems. I tend to google the candidate and see how they dealing with this situation (e.g., changing an é to an e) and copy that. 
+- 
