@@ -5,23 +5,23 @@ This tool scans the URLs, and assocaited typos, of candidate election pages. Thi
 
 Example types of candidate URLs it looks for are:
 
-###http://www.joshfranklin.com
-#*http://www.josh2014.com
+*http://www.joshfranklin.com
+*http://www.josh2014.com
 *http://www.franklin2014.com
-//http://www.joshfranklin2014.com
-*/http://www.joshfranklinforDC.com
-#http://www.joshfranklinDC.com
-*/http://www.joshforpresident.com
-http://www.josh4president.com
-www.joshforpresident2014.com
-#http://www.josh4president2014.com
-#http://www.presidentjoshfranklin.com
-#http://www.president-josh-franklin.com
-#http://www.presidentjoshforpresident2014.com
-#http://www.presidentjosh4president2014.com
-#http://www.presidentjoshfranklinforpresident2014.com
-#http://www.presidentjosh-franklinforpresident2014.com
-#http://www.presidentjoshfranklin4president2014.com
-#http://www.presidentjosh-franklin4president2014.com
+*http://www.joshfranklin2014.com
+*http://www.joshfranklinforDC.com
+*http://www.joshfranklinDC.com
+*http://www.joshforpresident.com
+*http://www.josh4president.com
+*www.joshforpresident2014.com
+*http://www.josh4president2014.com
+*http://www.presidentjoshfranklin.com
+*http://www.president-josh-franklin.com
+*http://www.presidentjoshforpresident2014.com
+*http://www.presidentjosh4president2014.com
+*http://www.presidentjoshfranklinforpresident2014.com
+*http://www.presidentjosh-franklinforpresident2014.com
+*http://www.presidentjoshfranklin4president2014.com
+*http://www.presidentjosh-franklin4president2014.com
 
 The tool prints output to the screen, but also writes to a logfile. The resulting logfiles are often ~3-5 MB. 
