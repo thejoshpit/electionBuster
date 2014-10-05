@@ -5,7 +5,7 @@ This tool scans the URLs, and assocaited typos, of candidate election pages. Thi
 
 Example types of candidate URLs it looks for are:
 
-joshfranklin.com
+- joshfranklin.com
 - josh2014.com
 - franklin2014.com
 - joshfranklin2014.com
