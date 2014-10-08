@@ -698,10 +698,10 @@ hours = (totalRuntime/3600)
 
 ###### Write final results to logfile ###########
 resultsFile.write("######################################" + "\n")
-resultsFile.write("ElectionBuster v8 Scan Results: " + "\n")
+resultsFile.write("ElectionBuster v9 Scan Results: " + "\n")
 resultsFile.write("######################################" + "\n")
 resultsFile.write("INPUTS = " + str(fName) + ", " + str(lName) + ", " + str(year) + ", " + str(electionType) + str(state) + "\n") 
-resultsFile.write("Total runtime was " + str(hours) + ' hours or ' + str(totalRuntime) + "\n")
+resultsFile.write("Total runtime was " + str(totalRuntime) + "\n")
 resultsFile.write("There were " + str(len(confirmedURLs)) + " positive results." + "\n")
 resultsFile.write("There were " + str(len(testedURLs)) + " unique URLs tested." + "\n")
 resultsFile.write("-------------------------------------" + "\n")
@@ -715,7 +715,7 @@ resultsFile.write("EOF " + "\n")
 				
 ###### Print final results to screen ###########			
 print "###################################### " + "\n"
-print "ElectionBuster v8 Scan Results: " + "\n"
+print "ElectionBuster v9 Scan Results: " + "\n"
 print "###################################### " + "\n"
 print "INPUTS" + "\n"
 print "First name: " + fName + "\n"
