@@ -79,6 +79,7 @@ fName = stringAndStrip(fName)
 lName = stringAndStrip(lName)
 year = stringAndStrip(year)
 electionType = stringAndStrip(electionType)
+state = stringAndStrip(state)
 
 # Expected URLs (obviously the list is different is the state var exists).
 if (args.state) : 
@@ -693,13 +694,14 @@ tryURL(url)
 # Wow! You've made it to the end. Well done! 
 
 totalRuntime = time.time() - start_time, "seconds"
+hours = (totalRuntime/3600)
 
 ###### Write final results to logfile ###########
 resultsFile.write("######################################" + "\n")
-resultsFile.write("ElectionBuster v5 Scan Results: " + "\n")
+resultsFile.write("ElectionBuster v8 Scan Results: " + "\n")
 resultsFile.write("######################################" + "\n")
-resultsFile.write("INPUTS = " + str(fName) + ", " + str(lName) + ", " + str(year) + ", " + str(electionType) + "\n") 
-resultsFile.write("Total runtime was " + str(totalRuntime) + "\n")
+resultsFile.write("INPUTS = " + str(fName) + ", " + str(lName) + ", " + str(year) + ", " + str(electionType) + str(state) + "\n") 
+resultsFile.write("Total runtime was " + str(hours) + ' hours or ' + str(totalRuntime) + "\n")
 resultsFile.write("There were " + str(len(confirmedURLs)) + " positive results." + "\n")
 resultsFile.write("There were " + str(len(testedURLs)) + " unique URLs tested." + "\n")
 resultsFile.write("-------------------------------------" + "\n")
@@ -713,7 +715,7 @@ resultsFile.write("EOF " + "\n")
 				
 ###### Print final results to screen ###########			
 print "###################################### " + "\n"
-print "ElectionBuster v5 Scan Results: " + "\n"
+print "ElectionBuster v8 Scan Results: " + "\n"
 print "###################################### " + "\n"
 print "INPUTS" + "\n"
 print "First name: " + fName + "\n"
