@@ -694,11 +694,10 @@ tryURL(url)
 # Wow! You've made it to the end. Well done! 
 
 totalRuntime = time.time() - start_time, "seconds"
-hours = (totalRuntime/3600)
 
 ###### Write final results to logfile ###########
 resultsFile.write("######################################" + "\n")
-resultsFile.write("ElectionBuster v9 Scan Results: " + "\n")
+resultsFile.write("ElectionBuster v10 Scan Results: " + "\n")
 resultsFile.write("######################################" + "\n")
 resultsFile.write("INPUTS = " + str(fName) + ", " + str(lName) + ", " + str(year) + ", " + str(electionType) + str(state) + "\n") 
 resultsFile.write("Total runtime was " + str(totalRuntime) + "\n")
@@ -715,7 +714,7 @@ resultsFile.write("EOF " + "\n")
 				
 ###### Print final results to screen ###########			
 print "###################################### " + "\n"
-print "ElectionBuster v9 Scan Results: " + "\n"
+print "ElectionBuster v10 Scan Results: " + "\n"
 print "###################################### " + "\n"
 print "INPUTS" + "\n"
 print "First name: " + fName + "\n"
