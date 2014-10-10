@@ -691,6 +691,24 @@ url = stringAndStrip(url)
 print 'Trying: ' + url
 tryURL(url)
 
+#This looks for votejoshfranklin.com
+url = 'http://www.vote' + fName + lName + '.com'
+url = stringAndStrip(url)
+print 'Trying: ' + url
+tryURL(url)
+
+#This looks for votejosh.com
+url = 'http://www.vote' + fName + '.com'
+url = stringAndStrip(url)
+print 'Trying: ' + url
+tryURL(url)
+
+#This looks for votefranklin.com
+url = 'http://www.vote' + lName + '.com'
+url = stringAndStrip(url)
+print 'Trying: ' + url
+tryURL(url)
+
 # Wow! You've made it to the end. Well done! 
 
 totalRuntime = time.time() - start_time, "seconds"
