@@ -31,6 +31,12 @@ Problems:
 - Special characters (non-english characters) cause the program problems. I tend to google the candidate and see how they dealing with this situation (e.g., changing an é to an e) and copy that. 
 
 To do list:
-- Add in support for small elections such as councilmember, ward, and sheriff
+- Add in support for small elections such as councilmember, ward, and sheriff, or just a * field
+- Include support for optional middle names
 - Change runtime to seconds. 
+- add realfNamelName
+- add lNameposition
+- add fNameforstate
 - Update version within code.
+- Log 300 and 400 series response codes as hits and log them
+- Change file name to avoid file name collisions 
