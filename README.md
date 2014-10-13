@@ -29,14 +29,15 @@ The tool prints output to the screen, but also writes to a logfile. The resultin
 Problems:
 - Middle names and middle inititals cause problems. The program cant only take in first names and last names as valid inputs. I typically googled the individual with a middle name/initial to see if it is actually used in their marketing material. If it is, I tend to concatenate it with the last name. 
 - Special characters (non-english characters) cause the program problems. I tend to google the candidate and see how they dealing with this situation (e.g., changing an é to an e) and copy that. 
+- Sometimes the code exits right before the results are written, after the scan has occured. 
 
 To do list:
+- Add banner to top of code w/ verison name in case an error occurs towards the end. 
 - Add in support for small elections such as councilmember, ward, and sheriff, or just a * field
-- Include support for optional middle names
+- Include optional support for middle names
 - Change runtime to seconds. 
 - add realfNamelName
 - add lNameposition
 - add fNameforstate
-- Update version within code.
 - Log 300 and 400 series response codes as hits and log them
 - Change file name to avoid file name collisions 
