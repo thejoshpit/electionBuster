@@ -20,8 +20,8 @@ def stringAndStrip(input):
 	return input
 
 #Parse command line arguments
-parser = argparse.ArgumentParser(description='Pulls down whois information by parsing a testfile from electionBuster.py')
-parser.add_argument('-f','--fileName', help='Name of electionBuster results ,required=True)
+parser = argparse.ArgumentParser(description='Pulls down whois information by parsing an electionBuster.py results file')
+parser.add_argument('-f','--fileName', help='Name of electionBuster results file', required=True)
 args = parser.parse_args()
 
 # Stores command line arguments
@@ -94,15 +94,21 @@ for url in URLlist:
 			newList.append(url)
 	flag = flag + 1 
 
+#setup to write to file
+resultsFile.write('electionBuster WHOIS results' + "\n")
+resultsFile.write('whoAreThey v2' + "\n")
+resultsFile.write('###############################' + "\n")
+resultsFile.write("\n")
 #final processing, lookup, and writing to logfile
-print 'Printing new URL list'
 for url in newList:
 	print url
+	resultsFile.write('-------------------------------------')
 	url = stringAndStrip(url)
 	resultsFile.write(str(url) + "\n")
 	w = whois.whois(url)
+	resultsFile.write(str(w) + "\n")
 	print w
+	resultsFile.write("\n")
 
 # Bad things happen if these files are not properly closed
 resultsFile.close()
-
