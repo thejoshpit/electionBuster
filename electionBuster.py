@@ -110,7 +110,7 @@ else :
 # This is the result output files
 # Makes a unique filename based on data and time
 now = date.today()
-tempResults = 'results-' + fName + '-' + lName + str(now) + '.txt'
+tempResults = 'results-' + fName + '-' + lName + '-' + state + '-' + str(now) + '.txt'
 
 resultsFile = open(tempResults, "w")
 
@@ -709,13 +709,43 @@ url = stringAndStrip(url)
 print 'Trying: ' + url
 tryURL(url)
 
+#This looks for franklinpresident.com
+url = 'http://www.' + lName + position + '.com'
+url = stringAndStrip(url)
+print 'Trying: ' + url
+tryURL(url)
+
+#This looks for franklinprez.com
+url = 'http://www.' + lName + altPosition + '.com'
+url = stringAndStrip(url)
+print 'Trying: ' + url
+tryURL(url)
+
+#This looks for realjoshfranklin.com
+url = 'http://www.real' + fName + lName + '.com'
+url = stringAndStrip(url)
+print 'Trying: ' + url
+tryURL(url)
+
+#This looks for franklinforDC.com
+url = 'http://www.' + lName + 'for' + state + '.com'
+url = stringAndStrip(url)
+print 'Trying: ' + url
+tryURL(url)
+
+#This looks for franklin4DC.com
+url = 'http://www.' + lName + '4' + state + '.com'
+url = stringAndStrip(url)
+print 'Trying: ' + url
+tryURL(url)
+
 # Wow! You've made it to the end. Well done! 
 
 totalRuntime = time.time() - start_time, "seconds"
 
 ###### Write final results to logfile ###########
 resultsFile.write("######################################" + "\n")
-resultsFile.write("ElectionBuster v10 Scan Results: " + "\n")
+resultsFile.write("ElectionBuster v12 Scan Results: " + "\n")
 resultsFile.write("######################################" + "\n")
 resultsFile.write("INPUTS = " + str(fName) + ", " + str(lName) + ", " + str(year) + ", " + str(electionType) + str(state) + "\n") 
 resultsFile.write("Total runtime was " + str(totalRuntime) + "\n")
@@ -732,7 +762,7 @@ resultsFile.write("EOF " + "\n")
 				
 ###### Print final results to screen ###########			
 print "###################################### " + "\n"
-print "ElectionBuster v10 Scan Results: " + "\n"
+print "ElectionBuster v12 Scan Results: " + "\n"
 print "###################################### " + "\n"
 print "INPUTS" + "\n"
 print "First name: " + fName + "\n"
