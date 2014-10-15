@@ -36,8 +36,4 @@ To do list:
 - Add in support for small elections such as councilmember, ward, and sheriff, or just a * field
 - Include optional support for middle names
 - Change runtime to seconds. 
-- add realfNamelName
-- add lNameposition
-- add fNameforstate
 - Log 300 and 400 series response codes as hits and log them
-- Change file name to avoid file name collisions 
