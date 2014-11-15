@@ -46,9 +46,10 @@ index = 0
 positiveResultsLine = 0 
 numberOfHits = 0 
 URLlist = []
-
+'''
 #grabbing total number of lines the file
 for line in lines:
+	print lines + '\n'
 	totalLines = totalLines + 1
 
 #finding the line right before the results appear in the file
@@ -57,14 +58,15 @@ for line in lines:
 		positiveResultsLine = index
 	else: 
 		index = index + 1
-
+'''
 # setting up some more variables
 numberOfHits = stringAndStrip(numberOfHits) 
 numberOfHits = int(numberOfHits)
 positiveResultsLine = positiveResultsLine + 1
 hitString = lines[positiveResultsLine]
 hitCount = 0 
-
+newList = []
+'''
 #increment where we found the results to where URL begin
 positiveResultsLine = positiveResultsLine + 5
 #parse the hitstring for the number of hits
@@ -86,29 +88,33 @@ for line in lines:
 # having some issues with spaces and a dashed line from results file
 # basically removing the spaces and dashes, and skipping the first line b/c that's a dash I couldn't get away from
 flag = 0 
-newList = []
+
 for url in URLlist:
 	if flag != 0:
 		url = stringAndStrip(url)
 		if url != ' ' or '-------------------------------------':
 			newList.append(url)
 	flag = flag + 1 
-
+'''
 #setup to write to file
 resultsFile.write('electionBuster WHOIS results' + "\n")
 resultsFile.write('whoAreThey v2' + "\n")
 resultsFile.write('###############################' + "\n")
 resultsFile.write("\n")
 #final processing, lookup, and writing to logfile
-for url in newList:
-	print url
+for line in lines:
+	url = stringAndStrip(line)
+	print url + "\n"
 	resultsFile.write('-------------------------------------')
-	url = stringAndStrip(url)
+	resultsFile.write("\n")
 	resultsFile.write(str(url) + "\n")
 	w = whois.whois(url)
 	resultsFile.write(str(w) + "\n")
 	print w
+	print "\n"
+	resultsFile.write('-------------------------------------')
 	resultsFile.write("\n")
 
 # Bad things happen if these files are not properly closed
 resultsFile.close()
+
