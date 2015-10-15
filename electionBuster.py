@@ -11,6 +11,7 @@
 ## 5: The state or region the candidate is from
 ##################################################
 
+import requests 
 import sys
 import time
 import string
@@ -132,33 +133,21 @@ def tryURL(url) :
 	if url not in testedURLs :
 		try: 
 			#Open input URL
-			httpResponse = urlopen(url)
+			httpResponse = requests.get(url)
 			print "*********************************************************************"
-			print "Page Exists: " + httpResponse.geturl() + "."
-			print httpResponse.info()
-			print httpResponse.code
+			print "Page Exists: " + httpResponse.url + "."
+			print httpResponse.headers
+			print httpResponse.status_code
 			print "*********************************************************************"
 			confirmedURLs.append(url)
 			testedURLs.append(url)
 			resultsFile.write("*************************************************+" + "\n")
-			resultsFile.write("Page Exists: " + httpResponse.geturl() + "\n")
-			resultsFile.write(str(url) + ", " + str(httpResponse.code) + "\n")
-			resultsFile.write(str(httpResponse.info()) + "\n")
+			resultsFile.write("Page Exists: " + httpResponse.url + "\n")
+			resultsFile.write(str(url) + ", " + str(httpResponse.status_code) + "\n")
+			resultsFile.write(str(httpResponse.headers) + "\n")
 			resultsFile.write("*************************************************+" + "\n")
-						
-		except HTTPError, e: 
-			print "HTTPError"
-			print e
-			print e.code
-			resultsFile.write(str(url) + ", HTTPError, " + str(e.code) + "\n")
-			testedURLs.append(url)
-			skippedURLs.append(url)
-		except URLError, e: 
-			print "URLError"
-			print e.reason
-			resultsFile.write(str(url) + ", URLError, " + str(e.reason) + "\n")
-			testedURLs.append(url)
-			skippedURLs.append(url)
+		except requests.exceptions.RequestException as e:    # This is the correct syntax
+                	print e
 
 def gen(website_name, alt_alphabet):
         A = 'abcdefghijklmnopqrstuvwxyz1234567890' # original alphabet string
@@ -346,6 +335,7 @@ else :
 				 ]
 
 # top-level domain-names
+
 tlds = ['com', 'net', 'me' , 'org', 'net', 'biz', 'info', 'us' ]
 
 # This generates the text mangling
@@ -745,7 +735,7 @@ totalRuntime = time.time() - start_time, "seconds"
 
 ###### Write final results to logfile ###########
 resultsFile.write("######################################" + "\n")
-resultsFile.write("ElectionBuster v12 Scan Results: " + "\n")
+resultsFile.write("ElectionBuster v13 Scan Results: " + "\n")
 resultsFile.write("######################################" + "\n")
 resultsFile.write("INPUTS = " + str(fName) + ", " + str(lName) + ", " + str(year) + ", " + str(electionType) + str(state) + "\n") 
 resultsFile.write("Total runtime was " + str(totalRuntime) + "\n")
@@ -762,7 +752,7 @@ resultsFile.write("EOF " + "\n")
 				
 ###### Print final results to screen ###########			
 print "###################################### " + "\n"
-print "ElectionBuster v12 Scan Results: " + "\n"
+print "ElectionBuster v13 Scan Results: " + "\n"
 print "###################################### " + "\n"
 print "INPUTS" + "\n"
 print "First name: " + fName + "\n"
