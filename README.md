@@ -1,7 +1,12 @@
 electionBuster.py
 =================
+Electoral candidates from both sides of the aisle increasingly rely on the internet to promote their brands and to focus the message of their political platforms. Yet cyberspace isn’t safespace. How do voters know they’re viewing a candidate’s real website? How can voters ensure their online donations are actually going to a specific candidate or cause? Election cybercrime is a burgeoning area but little data exists on the size and scope of these unscrupulous activities. Election Buster is an open source suite of tools to begin to measure the scope of this problem and used it to scan every single candidate running for the house and senate (1000+ candidates)in the 2014 General Elections. We're continuing development and using it to scan the 2016 election.
 
-This tool scans the URLs, and assocaited typos, of candidate election pages. This is done in an attempt to identitfy typosquatters. The time the tool takes to run is highly dependent on multiple factors, but the two most important factors seem to be length of the candidate's name (and state) and the type of network medium the tool is run over (i.e., wired or wireless). Wired connections often take about 30 minutes to an hour to complete, while wireless connections cause the program to finish in around 8 to 10 hours. 
+This tool scans the URLs, and assocaited typos, of candidate election pages. This is done in an attempt to identitfy typosquatters. The time the tool takes to run is highly dependent on multiple factors, but the two most important factors are  length of the candidate's name (and state) and the type of network medium the tool is run over (i.e., wired or wireless). Wired connections often take about 30 minutes to an hour to complete, while wireless connections cause the program to finish in around 8 to 10 hours. 
+
+Visit https://jfranklin.me/ElectionCybercrime for updates
+Visit the following site for a slidedeck about a 2015 update on the project. 
+http://jfranklin.me/prez/ElectionCybercrime-BsidesDC2015.pdf
 
 Example types of candidate URLs it looks for are:
 
@@ -32,7 +37,6 @@ Problems:
 - Sometimes the code exits right before the results are written, after the scan has occured. 
 
 To do list:
-- Add banner to top of code w/ verison name in case an error occurs towards the end. 
 - Add in support for small elections such as councilmember, ward, and sheriff, or just a * field
 - Include optional support for middle names
 - Change runtime to seconds. 
