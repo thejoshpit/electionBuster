@@ -3,17 +3,21 @@
 ## PACscan - Identifies registered domains for PACs
 ## Author: Joshua Franklin
 ## Example input to start: 
-## sudo ./electionBuster.py -p somePACname -y 2014
+## sudo ./pacScan.py -p somePACname -y 2014
 ## 1: The first name of the PAC
 ## 2: The year you are scanning
 ##################################################
 
+from urllib2 import Request, urlopen, URLError, HTTPError
+import requests 
 import sys
 import time
 import string
 import argparse
+import socket
 from datetime import date
 from urllib2 import Request, urlopen, URLError, HTTPError
+from multiprocessing.dummy import Pool as ThreadPool 
 
 # Program Timer
 start_time = time.time()
@@ -65,39 +69,40 @@ vowels = "aeiouy"
 confirmedURLs = []
 testedURLs = []
 skippedURLs = []
-
-def tryURL(url) : 
-	url = url
+allURLS = []
+def tryURL(url) :
+	allURLS.append( url)
+	
+def tryURLforReal(url) : 
+	fetchResult = ""
 	if url not in testedURLs :
 		try: 
 			#Open input URL
-			httpResponse = urlopen(url)
-			print "*********************************************************************"
-			print "Page Exists: " + httpResponse.geturl() + "."
-			print httpResponse.info()
-			print httpResponse.code
-			print "*********************************************************************"
+			httpResponse = requests.get(url, timeout=10)
+			fetchResult =               "*************************************************+" + "\n" 
+			fetchResult = fetchResult + "Page Exists: " + httpResponse.url + "\n"
+			fetchResult = fetchResult + str(url) + ", " + str(httpResponse.status_code) + "\n"
+			fetchResult = fetchResult + str(httpResponse.headers) + "\n"
+			fetchResult = fetchResult + "*************************************************+" + "\n"
+			
+			print fetchResult 
+
 			confirmedURLs.append(url)
 			testedURLs.append(url)
-			resultsFile.write("*************************************************+" + "\n")
-			resultsFile.write("Page Exists: " + httpResponse.geturl() + "\n")
-			resultsFile.write(str(url) + ", " + str(httpResponse.code) + "\n")
-			resultsFile.write(str(httpResponse.info()) + "\n")
-			resultsFile.write("*************************************************+" + "\n")
-						
-		except HTTPError, e: 
-			print "HTTPError"
-			print e
-			print e.code
-			resultsFile.write(str(url) + ", HTTPError, " + str(e.code) + "\n")
-			testedURLs.append(url)
-			skippedURLs.append(url)
-		except URLError, e: 
-			print "URLError"
-			print e.reason
-			resultsFile.write(str(url) + ", URLError, " + str(e.reason) + "\n")
-			testedURLs.append(url)
-			skippedURLs.append(url)
+
+			return fetchResult 
+		except requests.exceptions.RequestException as e:    # This is the correct syntax
+                    url = url
+		except socket.timeout as e:
+                    url = url
+	return fetchResult
+	
+def removeDups(seq):
+   # not order preserving
+   set = {}
+   map(set.__setitem__, seq, [])
+   return set.keys()
+   
 
 def gen(website_name, alt_alphabet):
         A = 'abcdefghijklmnopqrstuvwxyz1234567890' # original alphabet string
@@ -215,9 +220,6 @@ alt_alphabets = [ 'abcdefghijklmnopqrstuvwxyz1234567890',
 				  'abcd3fghijklmnopqrstuvwxyz1234567890',
 				  'abcdefghijklmnopqrstuvwxyz12e4567890']
 
-# These are the template names - refer to Loop 1 for examples
-
-
 templates = [
 			 PACname,
 			 PACname + year, 
@@ -227,6 +229,7 @@ templates = [
 			 ]
 
 # top-level domain-names
+
 tlds = ['com', 'net', 'me' , 'org', 'net', 'biz', 'info', 'us' ]
 
 # This generates the text mangling
@@ -234,11 +237,6 @@ results = genAll( templates, alt_alphabets)
 
 # This generates the text mangling with some other alternatives
 resultsDonate = genAllDonate( templates, alt_alphabets)
-
-#### LOOP 1 ####
-# All examples use the input of 'josh franklin 2014 president DC' 
-##################
-#http://www.joshfranklin.com
 
 print "Entering template loop 1^^^^^^^^^^^^^^^^^^^^^^^^^^" 
 print time.time() - start_time, "seconds"
@@ -273,37 +271,6 @@ for r in results:
 	url = stringAndStrip(urlnoperiod)
 	print 'Trying: ' + urlnoperiod
 	tryURL(urlnoperiod)
-
-### LOOP 3 ###
-# Puts donate at the end and removes the period after 'www'
-########################
-#http://www.joshfranklindonate.com
-#http://wwwjoshfranklindonate.com
-print "There were " + str(len(skippedURLs)) + " skipped so far."
-print "Entering template loop 3^^^^^^^^^^^^^^^^^^^^^^^^^^" 
-print time.time() - start_time, "seconds"
-for r in resultsDonate:
-	r = stringAndStrip(r) 
-	
-	#http://www.joshfranklindonate.com
-	url = 'http://www.' + r
-	url = stringAndStrip(url)
-	print 'Trying: ' + url
-	tryURL(url)
-	
-	#Donate at the end without periods after www
-	#http://wwwjoshfranklindonate.com
-	urlnoperiod = 'http://www' + r 
-	url = stringAndStrip(urlnoperiod)
-	print 'Trying: ' + urlnoperiod
-	tryURL(urlnoperiod)
-
-# TODO: add an extra o to situations with two 'o's, like "book" to "boook"
-# TODO: try Rick for Richard etcetera 
-# TODO: Turn 2014 into 14 so we look for http://www.lName+fName+14.com
-
-### NEW TYPO FUNCTIONS###
-# All examples use josh franklin 2014 president DC 
 
 typoPACname = PACname
 typoPACnameYear= PACname + year
@@ -500,20 +467,47 @@ for r in reverseResults3 :
 
 ### CORNER CASES ###
 # The following looks for odd domains that I've noticed 
-'''
-# This looks for 'teamfranklin'
-url = 'http://www.team' + fName + '.com'
+url = 'http://www.' + PACname + '.sucks'
 url = stringAndStrip(url)
 print 'Trying: ' + url
 tryURL(url)
-'''
+
+url = 'http://www.' + PACname + '.vote'
+url = stringAndStrip(url)
+print 'Trying: ' + url
+tryURL(url)
+
+print str(len(allURLS)) + "\n" 
+allURLS = removeDups( allURLS ) 
+print str(len(allURLS)) + "\n" 
+
+# Make the Pool of workers
+pool = ThreadPool(12) 
+
+# Open the urls in their own threads
+# and return the results
+results = pool.map(tryURLforReal, allURLS)
+
+#close the pool and wait for the work to finish 
+pool.close() 
+pool.join() 
+
+# Each tread added an entry for each result (found or not, gotta filter the blanks)
+# I'm doing this here sinced the file writes might not have been synchronized
+# its just a fear I had
+for i in results:
+    if ( len(i) > 10 ) :  
+        resultsFile.write( i )
+
+# Wow! You've made it to the end. Well done! 
+
 totalRuntime = time.time() - start_time, "seconds"
 
 ###### Write final results to logfile ###########
 resultsFile.write("######################################" + "\n")
-resultsFile.write("PACscan v1 Scan Results: " + "\n")
+resultsFile.write("PacScan v2 Scan Results: " + "\n")
 resultsFile.write("######################################" + "\n")
-resultsFile.write("INPUTS = " + str(PACname) + ", " + str(year) + "\n") 
+resultsFile.write("INPUTS = " + str(PACname) + ", " + str(year) + ", " + str(year) + "\n") 
 resultsFile.write("Total runtime was " + str(totalRuntime) + "\n")
 resultsFile.write("There were " + str(len(confirmedURLs)) + " positive results." + "\n")
 resultsFile.write("There were " + str(len(testedURLs)) + " unique URLs tested." + "\n")
@@ -528,7 +522,7 @@ resultsFile.write("EOF " + "\n")
 				
 ###### Print final results to screen ###########			
 print "###################################### " + "\n"
-print "PACscan v1 Scan Results: " + "\n"
+print "PacScan v2 Scan Results: " + "\n"
 print "###################################### " + "\n"
 print "INPUTS" + "\n"
 print "PAC name: " + PACname + "\n"
@@ -542,6 +536,8 @@ print "-------------------------------------" + "\n"
 for url in confirmedURLs:
 	print url
 print "\n"
+
+#TODO: Parse goodResults.txt's pages and look for GoDaddy, Bluehost pages 
 
 # Bad things happen if these files are not properly closed
 resultsFile.close()
