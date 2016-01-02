@@ -1,6 +1,6 @@
 #!/usr/bin/python
 ##################################################
-## Author: Joshua Franklin
+## Author: Joshua Franklin, Kevin Franklin
 ## Example input to start: 
 ## sudo ./electionBuster.py -f josh -l franklin -y 2014 -e senate -s pennsyltucky 
 ## 6 arguments are passed:
@@ -16,8 +16,10 @@ import sys
 import time
 import string
 import argparse
+import socket
 from datetime import date
 from urllib2 import Request, urlopen, URLError, HTTPError
+from multiprocessing.dummy import Pool as ThreadPool 
 
 # Program Timer
 start_time = time.time()
@@ -47,6 +49,7 @@ lName = lName.lower()
 year = args.year
 electionType = args.electionType
 electionType = electionType.lower()
+state = ""
 if (args.state) :
         state = args.state
         state = stringAndStrip(state)
@@ -58,7 +61,7 @@ if (args.fileName) :
 # This assigns the position variable
 if (electionType == 'congress') or (electionType == 'congressional') : 
 	position = 'congress'
-	altPosition = 'congressman'
+	altPosition = 'congressman'  # congresswoman??
 elif electionType == 'senate' : 
 	position = 'senator'
 	altPosition = 'senate'
@@ -82,7 +85,7 @@ year = stringAndStrip(year)
 electionType = stringAndStrip(electionType)
 state = stringAndStrip(state)
 
-# Expected URLs (obviously the list is different is the state var exists).
+# Expected URLs (obviously the list is different if the state var exists).
 if (args.state) : 
 	print 'We expect to find these URLs excluding subtle variances:'
 	print 'http://www.' + fName + lName + '.com'
@@ -126,28 +129,41 @@ vowels = "aeiouy"
 
 confirmedURLs = []
 testedURLs = []
-skippedURLs = []
-
-def tryURL(url) : 
-	url = url
+#skippedURLs = []  Does not appear to be used
+allURLS = []
+def tryURL(url) :
+	allURLS.append( url)
+	
+def tryURLforReal(url) : 
+	fetchResult = ""
 	if url not in testedURLs :
 		try: 
 			#Open input URL
-			httpResponse = requests.get(url)
-			print "*********************************************************************"
-			print "Page Exists: " + httpResponse.url + "."
-			print httpResponse.headers
-			print httpResponse.status_code
-			print "*********************************************************************"
+			httpResponse = requests.get(url, timeout=10)
+			fetchResult =               "*************************************************+" + "\n" 
+			fetchResult = fetchResult + "Page Exists: " + httpResponse.url + "\n"
+			fetchResult = fetchResult + str(url) + ", " + str(httpResponse.status_code) + "\n"
+			fetchResult = fetchResult + str(httpResponse.headers) + "\n"
+			fetchResult = fetchResult + "*************************************************+" + "\n"
+			
+			print fetchResult 
+
 			confirmedURLs.append(url)
 			testedURLs.append(url)
-			resultsFile.write("*************************************************+" + "\n")
-			resultsFile.write("Page Exists: " + httpResponse.url + "\n")
-			resultsFile.write(str(url) + ", " + str(httpResponse.status_code) + "\n")
-			resultsFile.write(str(httpResponse.headers) + "\n")
-			resultsFile.write("*************************************************+" + "\n")
+
+			return fetchResult 
 		except requests.exceptions.RequestException as e:    # This is the correct syntax
-                	print e
+                    url = url
+		except socket.timeout as e:
+                    url = url
+	return fetchResult
+	
+def removeDups(seq):
+   # not order preserving
+   set = {}
+   map(set.__setitem__, seq, [])
+   return set.keys()
+   
 
 def gen(website_name, alt_alphabet):
         A = 'abcdefghijklmnopqrstuvwxyz1234567890' # original alphabet string
@@ -383,7 +399,7 @@ for r in results:
 #http://wwwjoshfranklin.com
 
 print "Entering template loop 2^^^^^^^^^^^^^^^^^^^^^^^^^^"
-print "There were " + str(len(skippedURLs)) + " skipped so far."
+#print "There were " + str(len(skippedURLs)) + " skipped so far."
 print time.time() - start_time, "seconds"
 for r in results:
 	r = stringAndStrip(r) 
@@ -405,7 +421,7 @@ for r in results:
 ########################
 #http://www.joshfranklindonate.com
 #http://wwwjoshfranklindonate.com
-print "There were " + str(len(skippedURLs)) + " skipped so far."
+#print "There were " + str(len(skippedURLs)) + " skipped so far."
 print "Entering template loop 3^^^^^^^^^^^^^^^^^^^^^^^^^^" 
 print time.time() - start_time, "seconds"
 for r in resultsDonate:
@@ -457,7 +473,7 @@ subResults3 = substitution(typoFirstLastYear)
 reverseResults3 = reverseLetter(typoFirstLastYear)
 
 ### Typo loop 1 ###
-print "There were " + str(len(skippedURLs)) + " skipped so far."
+#print "There were " + str(len(skippedURLs)) + " skipped so far."
 print "Entering vowel loop"
 for r in vowelResults1 : 
 	url = 'http://www.' + r
@@ -513,7 +529,7 @@ for r in reverseResults1 :
 		tryURL(tempURL)
 					
 ### Typo loop 2 ###
-print "There were " + str(len(skippedURLs)) + " skipped so far."
+#print "There were " + str(len(skippedURLs)) + " skipped so far."
 print "Entering vowel loop"
 for r in vowelResults2 : 
 	url = 'http://www.' + r
@@ -569,7 +585,7 @@ for r in reverseResults2 :
 		tryURL(tempURL)
 
 ### Typo loop 3 ###
-print "There were " + str(len(skippedURLs)) + " skipped so far."
+#print "There were " + str(len(skippedURLs)) + " skipped so far."
 print "Entering vowel loop"
 for r in vowelResults3 : 
 	url = 'http://www.' + r
@@ -729,13 +745,36 @@ url = stringAndStrip(url)
 print 'Trying: ' + url
 tryURL(url)
 
+
+print str(len(allURLS)) + "\n" 
+allURLS = removeDups( allURLS ) 
+print str(len(allURLS)) + "\n" 
+
+# Make the Pool of workers
+pool = ThreadPool(12) 
+
+# Open the urls in their own threads
+# and return the results
+results = pool.map(tryURLforReal, allURLS)
+
+#close the pool and wait for the work to finish 
+pool.close() 
+pool.join() 
+
+# Each tread added an entry for each result (found or not, gotta filter the blanks)
+# I'm doing this here sinced the file writes might not have been synchronized
+# its just a fear I had
+for i in results:
+    if ( len(i) > 10 ) :  
+        resultsFile.write( i )
+
 # Wow! You've made it to the end. Well done! 
 
 totalRuntime = time.time() - start_time, "seconds"
 
 ###### Write final results to logfile ###########
 resultsFile.write("######################################" + "\n")
-resultsFile.write("ElectionBuster v14 Scan Results: " + "\n")
+resultsFile.write("ElectionBuster v15 Scan Results: " + "\n")
 resultsFile.write("######################################" + "\n")
 resultsFile.write("INPUTS = " + str(fName) + ", " + str(lName) + ", " + str(year) + ", " + str(electionType) + str(state) + "\n") 
 resultsFile.write("Total runtime was " + str(totalRuntime) + "\n")
@@ -752,7 +791,7 @@ resultsFile.write("EOF " + "\n")
 				
 ###### Print final results to screen ###########			
 print "###################################### " + "\n"
-print "ElectionBuster v14 Scan Results: " + "\n"
+print "ElectionBuster v15 Scan Results: " + "\n"
 print "###################################### " + "\n"
 print "INPUTS" + "\n"
 print "First name: " + fName + "\n"
@@ -770,7 +809,6 @@ for url in confirmedURLs:
 print "\n"
 
 #TODO: Parse goodResults.txt's pages and look for GoDaddy, Bluehost pages 
-#TODO: Take screenshots
 
 # Bad things happen if these files are not properly closed
 resultsFile.close()
