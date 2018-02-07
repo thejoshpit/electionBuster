@@ -1,6 +1,6 @@
 #!/bin/bash
 
-homed=/home/kevin/Desktop/nightly
+homed=/media/home/kevin/electionbuster
 
 cd $homed
 
@@ -10,7 +10,6 @@ cd $d
 
 for j in `ls result*.txt` 
 do
-	$homed/resultsScreen.sh $j
+	nohup env DISPLAY=:0 $homed/resultsScreen.sh $j &
 done
-
 
