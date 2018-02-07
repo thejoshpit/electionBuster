@@ -1,7 +1,8 @@
 "use strict";
 var page = require('webpage').create(),
     system = require('system'),
-    address, output, size;
+    address, output, outputHtml, content, size;
+var fs = require('fs');
 
 if (system.args.length < 3 || system.args.length > 5) {
     console.log('Usage: rasterize.js URL filename [paperwidth*paperheight|paperformat] [zoom]');
@@ -12,6 +13,7 @@ if (system.args.length < 3 || system.args.length > 5) {
 } else {
     address = system.args[1];
     output = system.args[2];
+    outputHtml = system.args[2].slice( 0, -4 ) + ".html"
     page.viewportSize = { width: 600, height: 600 };
     if (system.args.length > 3 && system.args[2].substr(-4) === ".pdf") {
         size = system.args[3].split('*');
@@ -38,10 +40,12 @@ if (system.args.length < 3 || system.args.length > 5) {
     page.open(address, function (status) {
         if (status !== 'success') {
             console.log('Unable to load the address!');
+	    fs.write( outputHtml, "FAILED TO LOAD " + status , 'w' );
             phantom.exit(1);
         } else {
             window.setTimeout(function () {
                 page.render(output);
+		fs.write( outputHtml, page.content, 'w' );
                 phantom.exit();
             }, 200);
         }
