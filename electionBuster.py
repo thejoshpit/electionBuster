@@ -1,4 +1,5 @@
-#!/usr/bin/python
+#!/usr/bin/python3.5
+ 
 ##################################################
 ## Author: Joshua Franklin
 ## Example input to start: 
@@ -10,6 +11,7 @@
 ## 4: The type of race (e.g., congress, senate, president)
 ## 5: The state or region the candidate is from
 ##################################################
+# Notes: Move tlds to tryURL such that we try all tlds for each url generated
 
 import requests 
 import sys
@@ -18,8 +20,8 @@ import string
 import argparse
 import socket
 from datetime import date
-from urllib2 import Request, urlopen, URLError, HTTPError
-from multiprocessing.dummy import Pool as ThreadPool 
+import urllib 
+from multiprocessing import Pool as ThreadPool 
 
 # Program Timer
 start_time = time.time()
@@ -30,111 +32,14 @@ def stringAndStrip(input):
 	input =  input.rstrip()
 	return input
 
-#Parse command line arguments
-parser = argparse.ArgumentParser(description='Identifies registered candidate domains')
-parser.add_argument('-f','--firstName', help='Candidate\'s first name',required=True)
-parser.add_argument('-l','--lastName',help='Candidate\'s last name', required=True)
-parser.add_argument('-y','--year', help='Year of the election',required=True)
-parser.add_argument('-e','--electionType',help='Type of election (congress, senate, president)', required=True)
-parser.add_argument('-s','--state', help='Candidate\'s state of origin')
-parser.add_argument('-file','--fileName', help='Filename containing a list of candidates')
-args = parser.parse_args()
-
-# Stores command line argumetns
-# Make all lowercase
-fName = args.firstName
-fName = fName.lower()
-lName = args.lastName
-lName = lName.lower()
-year = args.year
-electionType = args.electionType
-electionType = electionType.lower()
-state = ""
-if (args.state) :
-        state = args.state
-        state = stringAndStrip(state)
-        state = state.lower()
-if (args.fileName) :
-        fileName = args.fileName
-        fileName = stringAndStrip(fileName)
-
-# This assigns the position variable
-if (electionType == 'congress') or (electionType == 'congressional') : 
-	position = 'congress'
-	altPosition = 'congressman'  # congresswoman??
-elif electionType == 'senate' : 
-	position = 'senator'
-	altPosition = 'senate'
-elif (electionType == 'governor') or (electionType == 'gubernatorial'): 
-	position = 'governor'
-	altPosition = 'gov'
-elif (electionType == 'president') or (electionType == 'presidential') : 
-	position = 'president'
-	altPosition = 'prez'
-elif (electionType == 'mayoral') or (electionType == 'mayor') : 
-	position = 'mayor'
-	altPosition = 'mayoral'
-else : 
-	position = electionType
-	altPosition = electionType
-
-# Runs stringAndStrip on everything except fileName b/c that's used elsewhere
-fName = stringAndStrip(fName)
-lName = stringAndStrip(lName)
-year = stringAndStrip(year)
-electionType = stringAndStrip(electionType)
-state = stringAndStrip(state)
-
-# Expected URLs (obviously the list is different if the state var exists).
-if (args.state) : 
-	print 'We expect to find these URLs excluding subtle variances:'
-	print 'http://www.' + fName + lName + '.com'
-	print 'http://www.' + lName + fName + '.com'
-	print 'http://www.' + fName + year + '.com'
-	print 'http://www.' + lName + year + '.com'
-	print 'http://www.' + fName + lName + year + '.com' 
-	print 'http://www.' + fName + lName + 'for' + state + '.com'
-	print 'http://www.' + fName + lName + state + '.com'
-	print 'http://www.' + fName + lName + 'for' + position + '.com'
-	print 'http://www.' + fName + 'for' + position + '.com'
-	print 'http://www.' + fName + 'for' + position + year + '.com'
-	print 'http://www.' + position + fName + lName + '.com'
-else : 
-	print 'We expect to find these URLs excluding subtle variances:'
-	print 'http://www.' + fName + lName + '.com'
-	print 'http://www.' + lName + fName + '.com'
-	print 'http://www.' + fName + year + '.com'
-	print 'http://www.' + lName + year + '.com'
-	print 'http://www.' + fName + lName + year + '.com' 
-	print 'http://www.' + fName + lName + 'for' + position + '.com'
-	print 'http://www.' + fName + 'for' + position + '.com'
-	print 'http://www.' + fName + 'for' + position + year + '.com'
-	print 'http://www.' + position + fName + lName + '.com'
-
-# This is the result output files
-# Makes a unique filename based on data and time
-now = date.today()
-tempResults = 'results-' + fName + '-' + lName + '-' + state + '-' + str(now) + '.txt'
-
-resultsFile = open(tempResults, "w")
-
-# This clears the results files before reopening them
-resultsFile.close()
-
-resultsFile = open(tempResults, "a")
-
-# Need a base alphabet for the first set of mangling functions
-alphabet = "abcdefghijklmnopqrstuvwxyz0123456789"
-vowels = "aeiouy"
-
-confirmedURLs = []
-testedURLs = []
-#skippedURLs = []  Does not appear to be used
-allURLS = []
 def tryURL(url) :
+	url = stringAndStrip(url)
+	print('Trying: ' + url)
 	allURLS.append( url)
 	
 def tryURLforReal(url) : 
+	global testedURLs
+	global confirmedURLs
 	fetchResult = ""
 	if url not in testedURLs :
 		try: 
@@ -145,48 +50,46 @@ def tryURLforReal(url) :
 			fetchResult = fetchResult + str(url) + ", " + str(httpResponse.status_code) + "\n"
 			fetchResult = fetchResult + str(httpResponse.headers) + "\n"
 			fetchResult = fetchResult + "*************************************************+" + "\n"
-			
-			print fetchResult 
-
+			print(fetchResult)
 			confirmedURLs.append(url)
 			testedURLs.append(url)
 
 			return fetchResult 
 		except requests.exceptions.RequestException as e:    # This is the correct syntax
-                    url = url
+                    pass
 		except socket.timeout as e:
-                    url = url
+                    pass
 	return fetchResult
-	
-def removeDups(seq):
-   # not order preserving
-   set = {}
-   map(set.__setitem__, seq, [])
-   return set.keys()
-   
+
+def removeDups(numbers):
+    newlist = []
+    for number in numbers:
+       if number not in newlist:
+           newlist.append(number)
+    return newlist
 
 def gen(website_name, alt_alphabet):
         A = 'abcdefghijklmnopqrstuvwxyz1234567890' # original alphabet string
-        xform = string.maketrans(A, alt_alphabet)
+        xform = str.maketrans(A, alt_alphabet)
         s = website_name.translate(xform)
         return s
 
 def genAll(website_names, alphabets):
-        results = []
-        for s in website_names:
-                for a in alphabets:
-                        mangled_name = gen(s, a)
-                        for domain_name_ending in tlds:
-                                results.append( mangled_name + '.' + domain_name_ending )
+	results = []
+	for s in website_names:
+		for a in alphabets:
+			mangled_name = gen(s, a)
+			for domain_name_ending in tlds:
+				results.append( mangled_name + '.' + domain_name_ending )
 	return results
 
 def genAllDonate(website_names, alphabets):
-        results = []
-        for s in website_names:
-                for a in alphabets:
-                        mangled_name = gen(s, a)
-                        for domain_name_ending in tlds:
-                                results.append( mangled_name + 'donate.' + domain_name_ending )
+	results = []
+	for s in website_names:
+		for a in alphabets:
+			mangled_name = gen(s, a)
+			for domain_name_ending in tlds:
+				results.append( mangled_name + 'donate.' + domain_name_ending )
 	return results
 
 # This function returns strings with each character missing
@@ -257,6 +160,108 @@ def substitution(s):
                 kwds.append(kwd)
                 
         return kwds      
+
+#Parse command line arguments
+parser = argparse.ArgumentParser(description='Identifies registered candidate domains')
+parser.add_argument('-f','--firstName', help='Candidate\'s first name',required=True)
+parser.add_argument('-l','--lastName',help='Candidate\'s last name', required=True)
+parser.add_argument('-y','--year', help='Year of the election',required=True)
+parser.add_argument('-e','--electionType',help='Type of election (congress, senate, president)', required=True)
+parser.add_argument('-s','--state', help='Candidate\'s state of origin')
+parser.add_argument('-file','--fileName', help='Filename containing a list of candidates')
+args = parser.parse_args()
+
+# Stores command line argumetns
+# Make all lowercase
+fName = args.firstName
+fName = fName.lower()
+lName = args.lastName
+lName = lName.lower()
+year = args.year
+electionType = args.electionType
+electionType = electionType.lower()
+state = ""
+if (args.state) :
+        state = args.state
+        state = stringAndStrip(state)
+        state = state.lower()
+if (args.fileName) :
+        fileName = args.fileName
+        fileName = stringAndStrip(fileName)
+
+# This assigns the position variable
+if (electionType == 'congress') or (electionType == 'congressional') : 
+	position = 'congress'
+	altPosition = 'congressman'  # congresswoman??
+elif electionType == 'senate' : 
+	position = 'senator'
+	altPosition = 'senate'
+elif (electionType == 'governor') or (electionType == 'gubernatorial'): 
+	position = 'governor'
+	altPosition = 'gov'
+elif (electionType == 'president') or (electionType == 'presidential') : 
+	position = 'president'
+	altPosition = 'prez'
+elif (electionType == 'mayoral') or (electionType == 'mayor') : 
+	position = 'mayor'
+	altPosition = 'mayoral'
+else : 
+	position = electionType
+	altPosition = electionType
+
+# Runs stringAndStrip on everything except fileName b/c that's used elsewhere
+fName = stringAndStrip(fName)
+lName = stringAndStrip(lName)
+year = stringAndStrip(year)
+electionType = stringAndStrip(electionType)
+state = stringAndStrip(state)
+
+# Expected URLs (obviously the list is different if the state var exists).
+if (args.state) : 
+	print('We expect to find these URLs excluding subtle variances:')
+	print('http://www.' + fName + lName + '.com')
+	print('http://www.' + lName + fName + '.com')
+	print('http://www.' + fName + year + '.com')
+	print('http://www.' + lName + year + '.com')
+	print('http://www.' + fName + lName + year + '.com' )
+	print('http://www.' + fName + lName + 'for' + state + '.com')
+	print('http://www.' + fName + lName + state + '.com')
+	print('http://www.' + fName + lName + 'for' + position + '.com')
+	print('http://www.' + fName + 'for' + position + '.com')
+	print('http://www.' + fName + 'for' + position + year + '.com')
+	print('http://www.' + position + fName + lName + '.com')
+else : 
+	print('We expect to find these URLs excluding subtle variances:')
+	print('http://www.' + fName + lName + '.com')
+	print('http://www.' + lName + fName + '.com')
+	print('http://www.' + fName + year + '.com')
+	print('http://www.' + lName + year + '.com')
+	print('http://www.' + fName + lName + year + '.com' )
+	print('http://www.' + fName + lName + 'for' + position + '.com')
+	print('http://www.' + fName + 'for' + position + '.com')
+	print('http://www.' + fName + 'for' + position + year + '.com')
+	print('http://www.' + position + fName + lName + '.com')
+
+# This is the result output files
+# Makes a unique filename based on data and time
+now = date.today()
+tempResults = 'results-' + fName + '-' + lName + '-' + state + '-' + str(now) + '.txt'
+
+resultsFile = open(tempResults, "w")
+
+# This clears the results files before reopening them
+resultsFile.close()
+
+resultsFile = open(tempResults, "a")
+
+# Need a base alphabet for the first set of mangling functions
+alphabet = "abcdefghijklmnopqrstuvwxyz0123456789"
+vowels = "aeiouy"
+
+confirmedURLs = []
+testedURLs = []
+#skippedURLs = []  Does not appear to be used
+allURLS = []
   
 # alternative alphabets
 # 0: No change
@@ -270,88 +275,95 @@ def substitution(s):
 # 8: e -> 3 "Ee to three"
 # 9: 3 -> e "Three to ee"
 
-alt_alphabets = [ 'abcdefghijklmnopqrstuvwxyz1234567890',
-				  'abcdefgh1jklmnopqrstuvwxyz1234567890',
-				  'abcdefghijkimnopqrstuvwxyz1234567890',
-				  'abcdefghljklmnopqrstuvwxyz1234567890',
-				  'abcdefghijklmn0pqrstuvwxyz1234567890',
-				  'abcdefghijklmnopqrstuvwxyz123456789o',
-				  'abcdefghijklmmopqrstuvwxyz1234567890',
-				  'abcdefghijklnnopqrstuvwxyz1234567890',				  
-				  'abcd3fghijklmnopqrstuvwxyz1234567890',
-				  'abcdefghijklmnopqrstuvwxyz12e4567890']
+alt_alphabets = [ 	'abcdefghijklmnopqrstuvwxyz1234567890',
+			'abcdefgh1jklmnopqrstuvwxyz1234567890',
+			'abcdefghijkimnopqrstuvwxyz1234567890',
+			'abcdefghljklmnopqrstuvwxyz1234567890',
+			'abcdefghijklmn0pqrstuvwxyz1234567890',
+			'abcdefghijklmnopqrstuvwxyz123456789o',
+			'abcdefghijklmmopqrstuvwxyz1234567890',
+			'abcdefghijklnnopqrstuvwxyz1234567890',				  
+			'abcd3fghijklmnopqrstuvwxyz1234567890',
+			'abcdefghijklmnopqrstuvwxyz12e4567890']
 
 # These are the template names - refer to Loop 1 for examples
 
 if (args.state) : 
 	templates = [
-				 fName + lName,
-				 fName + '-' + lName, 
-				 lName + fName,
-				 lName + '-' + fName, 
-				 fName + year,
-				 lName + year,
-				 fName + lName + year, 
-				 fName + '-' + lName + year, 
-				 fName + lName + 'for' + state,
-				 fName + '-' + lName + 'for' + state, 
-				 fName + lName + '4' + state,
-				 fName + '-' + lName + '4' + state,
-				 fName + lName + state, 
-				 fName + '-' + lName + state, 
-				 fName + lName + 'for' + position, 
-				 fName + '-' + lName + 'for' + position, 
-				 fName + lName + '4' + position,
-				 fName + '-' + lName + '4' + position,
-				 fName + 'for' + position,
-				 fName + '4' + position,
-				 fName + 'for' + position + year,
-				 fName + '4' + position + year, 
-				 position + fName + lName, 
-				 position + '-' + fName + lName, 
-				 position + fName + '-' + lName, 
-				 position + '-' + fName + '-' + lName,
-				 fName + lName + 'for' + altPosition, 
-				 fName + lName + '4' + altPosition, 
-				 fName + 'for' + altPosition,
-				 fName + '4' + altPosition,
-				 lName + 'for' + altPosition,
-				 lName + 'for' + position,
-				 lName + '4' + position
-				 ]
+		fName + lName,
+		fName + '-' + lName, 
+		lName + fName,
+		lName + '-' + fName, 
+		fName + year,
+		lName + year,
+		fName + lName + year, 
+		fName + '-' + lName + year, 
+		fName + lName + 'for' + state,
+		fName + '-' + lName + 'for' + state, 
+		fName + lName + '4' + state,
+		fName + '-' + lName + '4' + state,
+		fName + lName + state, 
+		fName + '-' + lName + state, 
+		fName + lName + 'for' + position, 
+		fName + '-' + lName + 'for' + position, 
+		fName + lName + '4' + position,
+		fName + '-' + lName + '4' + position,
+		fName + 'for' + position,
+		fName + '4' + position,
+		fName + 'for' + position + year,
+		fName + '4' + position + year, 
+		position + fName + lName, 
+		position + '-' + fName + lName, 
+		position + fName + '-' + lName, 
+		position + '-' + fName + '-' + lName,
+		fName + lName + 'for' + altPosition, 
+		fName + lName + '4' + altPosition, 
+		fName + 'for' + altPosition,
+		fName + '4' + altPosition,
+		lName + 'for' + altPosition,
+		lName + 'for' + position,
+		lName + '4' + position
+	]
 else :  
 	templates = [
-				 fName + lName,
-				 fName + '-' + lName, 
-				 lName + fName,
-				 lName + '-' + fName, 
-				 fName + year,
-				 lName + year,
-				 fName + lName + year, 
-				 fName + '-' + lName + year, 
-				 fName + lName + 'for' + position, 
-				 fName + '-' + lName + 'for' + position, 
-				 fName + lName + '4' + position,
-				 fName + '-' + lName + '4' + position,
-				 fName + 'for' + position,
-				 fName + '4' + position,
-				 fName + 'for' + position + year,
-				 fName + '4' + position + year, 
-				 position + fName + lName, 
-				 position + '-' + fName + lName, 
-				 position + fName + '-' + lName, 
-				 position + '-' + fName + '-' + lName,
-				 fName + lName + 'for' + altPosition, 
-				 fName + lName + '4' + altPosition, 
-				 fName + 'for' + altPosition,
-				 fName + '4' + altPosition,
-				 lName + 'for' + altPosition,
-				 lName + 'for' + position,
-				 lName + '4' + position
-				 ]
+		fName + lName,
+		fName + '-' + lName, 
+		lName + fName,
+		lName + '-' + fName, 
+		fName + year,
+		lName + year,
+		fName + lName + year, 
+		fName + '-' + lName + year, 
+		fName + lName + 'for' + position, 
+		fName + '-' + lName + 'for' + position, 
+		fName + lName + '4' + position,
+		fName + '-' + lName + '4' + position,
+		fName + 'for' + position,
+		fName + '4' + position,
+		fName + 'for' + position + year,
+		fName + '4' + position + year, 
+		position + fName + lName, 
+		position + '-' + fName + lName, 
+		position + fName + '-' + lName, 
+		'vote' + fName,
+		'vote' + lName,
+		'votefor' + fName,
+		'votefor' + lName,
+		'votefor' + fName + lName,
+		'vote4' + fName,
+		'vote4' + lName,
+		'vote4' + fName + lName,
+		position + '-' + fName + '-' + lName,
+		fName + lName + 'for' + altPosition, 
+		fName + lName + '4' + altPosition, 
+		fName + 'for' + altPosition,
+		fName + '4' + altPosition,
+		lName + 'for' + altPosition,
+		lName + 'for' + position,
+		lName + '4' + position
+	]
 
 # top-level domain-names
-
 tlds = ['com', 'net', 'me' , 'org', 'net', 'biz', 'info', 'us' ]
 
 # This generates the text mangling
@@ -382,14 +394,10 @@ resultsDonate = genAllDonate( templates, alt_alphabets)
 #http://www.presidentjoshfranklin4president2014.com
 #http://www.presidentjosh-franklin4president2014.com
 
-print "Entering template loop 1^^^^^^^^^^^^^^^^^^^^^^^^^^" 
-print time.time() - start_time, "seconds"
+print("Entering template loop 1^^^^^^^^^^^^^^^^^^^^^^^^^^" )
+print(time.time() - start_time, "seconds")
 for r in results:
-	r = stringAndStrip(r) 
-	url = 'http://www.' + r
-	url = stringAndStrip(url)
-	print 'Trying: ' + url
-	tryURL(url)
+	tryURL( 'http://www.' + r )
 
 ### LOOP 2 ###
 # Puts donate at the beginning & 
@@ -398,23 +406,15 @@ for r in results:
 #http://www.donatejoshfranklin.com
 #http://wwwjoshfranklin.com
 
-print "Entering template loop 2^^^^^^^^^^^^^^^^^^^^^^^^^^"
+print("Entering template loop 2^^^^^^^^^^^^^^^^^^^^^^^^^^")
 #print "There were " + str(len(skippedURLs)) + " skipped so far."
-print time.time() - start_time, "seconds"
+print(time.time() - start_time, "seconds")
 for r in results:
-	r = stringAndStrip(r) 
-	
 	#Donate at the beginning
-	url = 'http://www.donate' + r
-	url = stringAndStrip(url)
-	print 'Trying: ' + url
-	tryURL(url)
+	tryURL( 'http://www.donate' + r )
 
 	#No period
-	urlnoperiod = 'http://www' + r
-	url = stringAndStrip(urlnoperiod)
-	print 'Trying: ' + urlnoperiod
-	tryURL(urlnoperiod)
+	tryURL( 'http://www' + r )
 
 ### LOOP 3 ###
 # Puts donate at the end and removes the period after 'www'
@@ -422,23 +422,12 @@ for r in results:
 #http://www.joshfranklindonate.com
 #http://wwwjoshfranklindonate.com
 #print "There were " + str(len(skippedURLs)) + " skipped so far."
-print "Entering template loop 3^^^^^^^^^^^^^^^^^^^^^^^^^^" 
-print time.time() - start_time, "seconds"
+print("Entering template loop 3^^^^^^^^^^^^^^^^^^^^^^^^^^" )
+print(time.time() - start_time, "seconds")
 for r in resultsDonate:
-	r = stringAndStrip(r) 
-	
-	#http://www.joshfranklindonate.com
-	url = 'http://www.' + r
-	url = stringAndStrip(url)
-	print 'Trying: ' + url
-	tryURL(url)
-	
+	tryURL( 'http://www.' + r ) # Example: http://www.joshfranklindonate.com
 	#Donate at the end without periods after www
-	#http://wwwjoshfranklindonate.com
-	urlnoperiod = 'http://www' + r 
-	url = stringAndStrip(urlnoperiod)
-	print 'Trying: ' + urlnoperiod
-	tryURL(urlnoperiod)
+	tryURL( 'http://www' + r ) # Example: http://wwwjoshfranklindonate.com
 
 # TODO: add an extra o to situations with two 'o's, like "book" to "boook"
 # TODO: try Rick for Richard etcetera 
@@ -474,293 +463,167 @@ reverseResults3 = reverseLetter(typoFirstLastYear)
 
 ### Typo loop 1 ###
 #print "There were " + str(len(skippedURLs)) + " skipped so far."
-print "Entering vowel loop"
+print( "Entering vowel loop")
 for r in vowelResults1 : 
-	url = 'http://www.' + r
-	url = stringAndStrip(url)
 	for tld in tlds:
-		tempURL = url + '.' + tld
-		print 'Trying: ' + tempURL
-		tryURL(tempURL)
+		tryURL( 'http://www.' + r + '.' + tld )
 
-print "Entering skip loop"
+print("Entering skip loop")
 for r in skipResults1 : 
-	url = 'http://www.' + r
-	url = stringAndStrip(url)
 	for tld in tlds:
-		tempURL = url + '.' + tld
-		print 'Trying: ' + tempURL
-		tryURL(tempURL)	
+		tryURL( 'http://www.' + r + '.' + tld )
 
-print "Entering double loop"
+print( "Entering double loop")
 for r in doubleResults1 : 
-	url = 'http://www.' + r
-	url = stringAndStrip(url)
 	for tld in tlds:
-		tempURL = url + '.' + tld
-		print 'Trying: ' + tempURL
-		tryURL(tempURL)	
+		tryURL( 'http://www.' + r + '.' + tld )
 
-print "Entering insert loop"
+print("Entering insert loop")
 for r in insertResults1 : 
-	url = 'http://www.' + r
-	url = stringAndStrip(url)
 	for tld in tlds:
-		tempURL = url + '.' + tld
-		print 'Trying: ' + tempURL
-		tryURL(tempURL)		
+		tryURL( 'http://www.' + r + '.' + tld )
 
-print "Entering sub loop"
+print( "Entering sub loop")
 for r in subResults1 : 
-	url = 'http://www.' + r
-	url = stringAndStrip(url)
 	for tld in tlds:
-		tempURL = url + '.' + tld
-		print 'Trying: ' + tempURL
-		tryURL(tempURL)	
+		tryURL( 'http://www.' + r + '.' + tld )
 
-print "Entering reverse loop"
+print("Entering reverse loop")
 for r in reverseResults1 : 
-	url = 'http://www.' + r
-	url = stringAndStrip(url)
 	for tld in tlds:
-		tempURL = url + '.' + tld
-		print 'Trying: ' + tempURL
-		tryURL(tempURL)
+		tryURL( 'http://www.' + r + '.' + tld )
 					
 ### Typo loop 2 ###
 #print "There were " + str(len(skippedURLs)) + " skipped so far."
-print "Entering vowel loop"
+print( "Entering vowel loop")
 for r in vowelResults2 : 
-	url = 'http://www.' + r
-	url = stringAndStrip(url)
 	for tld in tlds:
-		tempURL = url + '.' + tld
-		print 'Trying: ' + tempURL
-		tryURL(tempURL)
+		tryURL( 'http://www.' + r + '.' + tld )
 
-print "Entering skip loop"
+print( "Entering skip loop")
 for r in skipResults2 : 
-	url = 'http://www.' + r
-	url = stringAndStrip(url)
 	for tld in tlds:
-		tempURL = url + '.' + tld
-		print 'Trying: ' + tempURL
-		tryURL(tempURL)	
+		tryURL( 'http://www.' + r + '.' + tld )
 
-print "Entering double loop"
+print("Entering double loop")
 for r in doubleResults2 : 
-	url = 'http://www.' + r
-	url = stringAndStrip(url)
 	for tld in tlds:
-		tempURL = url + '.' + tld
-		print 'Trying: ' + tempURL
-		tryURL(tempURL)	
+		tryURL( 'http://www.' + r + '.' + tld )
 
-print "Entering insert loop"
+print("Entering insert loop")
 for r in insertResults2 : 
-	url = 'http://www.' + r
-	url = stringAndStrip(url)
 	for tld in tlds:
-		tempURL = url + '.' + tld
-		print 'Trying: ' + tempURL
-		tryURL(tempURL)		
+		tryURL( 'http://www.' + r + '.' + tld )
 
-print "Entering sub loop"
+print( "Entering sub loop")
 for r in subResults2 : 
-	url = 'http://www.' + r
-	url = stringAndStrip(url)
 	for tld in tlds:
-		tempURL = url + '.' + tld
-		print 'Trying: ' + tempURL
-		tryURL(tempURL)	
+		tryURL( 'http://www.' + r + '.' + tld )
 
-print "Entering reverse loop"
+print("Entering reverse loop")
 for r in reverseResults2 : 
-	url = 'http://www.' + r
-	url = stringAndStrip(url)
 	for tld in tlds:
-		tempURL = url + '.' + tld
-		print 'Trying: ' + tempURL
-		tryURL(tempURL)
+		tryURL( 'http://www.' + r + '.' + tld )
 
 ### Typo loop 3 ###
 #print "There were " + str(len(skippedURLs)) + " skipped so far."
-print "Entering vowel loop"
+print( "Entering vowel loop")
 for r in vowelResults3 : 
-	url = 'http://www.' + r
-	url = stringAndStrip(url)
 	for tld in tlds:
-		tempURL = url + '.' + tld
-		print 'Trying: ' + tempURL
-		tryURL(tempURL)
+		tryURL( 'http://www.' + r + '.' + tld )
 
-print "Entering skip loop"
+print( "Entering skip loop")
 for r in skipResults3 : 
-	url = 'http://www.' + r
-	url = stringAndStrip(url)
 	for tld in tlds:
-		tempURL = url + '.' + tld
-		print 'Trying: ' + tempURL
-		tryURL(tempURL)	
+		tryURL( 'http://www.' + r + '.' + tld )
 
-print "Entering double loop"
+print( "Entering double loop")
 for r in doubleResults3 : 
-	url = 'http://www.' + r
-	url = stringAndStrip(url)
 	for tld in tlds:
-		tempURL = url + '.' + tld
-		print 'Trying: ' + tempURL
-		tryURL(tempURL)	
+		tryURL( 'http://www.' + r + '.' + tld )
 
-print "Entering insert loop"
+print( "Entering insert loop")
 for r in insertResults3 : 
-	url = 'http://www.' + r
-	url = stringAndStrip(url)
 	for tld in tlds:
-		tempURL = url + '.' + tld
-		print 'Trying: ' + tempURL
-		tryURL(tempURL)		
+		tryURL( 'http://www.' + r + '.' + tld )
 
-print "Entering sub loop"
+print( "Entering sub loop")
 for r in subResults3 : 
 	url = 'http://www.' + r
-	url = stringAndStrip(url)
 	for tld in tlds:
-		tempURL = url + '.' + tld
-		print 'Trying: ' + tempURL
-		tryURL(tempURL)	
+		tryURL( url + '.' + tld )
 
-print "Entering reverse loop"
+print( "Entering reverse loop")
 for r in reverseResults3 : 
-	url = 'http://www.' + r
-	url = stringAndStrip(url)
 	for tld in tlds:
-		tempURL = url + '.' + tld
-		print 'Trying: ' + tempURL
-		tryURL(tempURL)
+		tryURL( 'http://www.' + r + '.' + tld )
 
 ### CORNER CASES ###
 # The following looks for odd domains that I've noticed 
+tryURL( 'http://www.team' + fName + '.com' ) # Example:  'teamfranklin'
+tryURL( 'http://www.team' + lName + '.com' )
+tryURL( 'http://www.team' + fName + lName + '.com' )
 
-# This looks for 'teamfranklin'
-url = 'http://www.team' + fName + '.com'
-url = stringAndStrip(url)
-print 'Trying: ' + url
-tryURL(url)
-
-url = 'http://www.team' + lName + '.com'
-url = stringAndStrip(url)
-print 'Trying: ' + url
-tryURL(url)
-
-url = 'http://www.team' + fName + lName + '.com'
-url = stringAndStrip(url)
-print 'Trying: ' + url
-tryURL(url)
-
-# This looks for 'repfranklin' 
+# Example:  'repfranklin' 
 # It's easier just to include for everyone, even if they are not in a congressional race
-url = 'http://www.rep' + fName + '.com'
-url = stringAndStrip(url)
-print 'Trying: ' + url
-tryURL(url)
-
-url = 'http://www.rep' + lName + '.com'
-url = stringAndStrip(url)
-print 'Trying: ' + url
-tryURL(url)
-
-url = 'http://www.rep' + fName + lName + '.com'
-url = stringAndStrip(url)
-print 'Trying: ' + url
-tryURL(url)
+tryURL( 'http://www.rep' + fName + '.com' )
+tryURL( 'http://www.rep' + lName + '.com' )
+tryURL( 'http://www.rep' + fName + lName + '.com' )
 
 #These next few look for some of the larger parties
-url = 'http://www.republican' + fName + lName + '.com'
-url = stringAndStrip(url)
-print 'Trying: ' + url
-tryURL(url)
+tryURL( 'http://www.republican' + fName + lName + '.com' )
+tryURL( 'http://www.democrat' + fName + lName + '.com' )
+tryURL( 'http://www.libertarian' + fName + lName + '.com' )
+tryURL( 'http://www.independent' + fName + lName + '.com' )
+tryURL( 'http://www.vote' + fName + lName + '.com' )   #Example:  votejoshfranklin.com
+tryURL( 'http://www.vote' + fName + '.com' )           #Example:  votejosh.com
+tryURL( 'http://www.vote' + lName + '.com' )           #Example:  votefranklin.com
+tryURL( 'http://www.' + lName + position + '.com' )    #Example:  franklinpresident.com
+tryURL( 'http://www.' + lName + altPosition + '.com' ) #Example:  franklinprez.com
+tryURL( 'http://www.real' + fName + lName + '.com' )   #Example:  realjoshfranklin.com
+tryURL( 'http://www.' + lName + 'for' + state + '.com' ) #Example:  franklinforDC.com
+tryURL( 'http://www.' + lName + '4' + state + '.com' ) #Example:  franklin4DC.com
+tryURL( 'http://www.friendsof' + fName + '.com' ) #Example:  friendsofjosh.com
+tryURL( 'http://www.friendsof' + fName + '.net' ) #Example:  friendsofjosh.net
+tryURL( 'http://www.friendsof' + fName + '.org' ) #Example:  friendsofjosh.org
+tryURL( 'http://www.friendsof' + lName + '.com' ) #Example:  friendsoffranklin.com
+tryURL( 'http://www.friendsof' + lName + '.net' ) #Example:  friendsoffranklin.net
+tryURL( 'http://www.friendsof' + lName + '.org' ) #Example:  friendsoffranklin.org
+tryURL( 'http://www.' + fName + 'sucks.com' ) #Example:  joshsucks.com
+tryURL( 'http://www.' + fName + 'sucks.net' ) #Example:  joshsucks.net
+tryURL( 'http://www.' + fName + 'sucks.org' ) #Example:  joshsucks.org
+tryURL( 'http://www.' + lName + 'sucks.com' ) #Example:  franklinsucks.com
+tryURL( 'http://www.' + lName + 'sucks.net' ) #Example:  franklinsucks.net
+tryURL( 'http://www.' + lName + 'sucks.org' ) #Example:  franklinsucks.org
+tryURL( 'http://www.' + fName + '.vote' )     #Example:  josh.vote
+tryURL( 'http://www.' + lName + '.vote' )     #Example:  franklin.vote
+tryURL( 'http://www.' + fName + lName + '.vote' ) #Example:  joshfranklin.vote
+tryURL( 'http://www.' + fName + '.republican' )   #Example:  josh.republican
+tryURL( 'http://www.' + lName + '.republican' )   #Example:  franklin.republican
+tryURL( 'http://www.' + fName + lName + '.republican' ) #Example:  joshfranklin.republican
+tryURL( 'http://www.' + fName + '.democrat' ) #Example:  josh.democrat
+tryURL( 'http://www.' + lName + '.democrat' ) #Example:  franklin.democrat
+tryURL( 'http://www.' + fName + lName + '.democrat' ) #Example:  joshfranklin.democrat
+tryURL( 'http://www.' + fName + 'questions.com' ) #Example:  joshquestions.com
+tryURL( 'http://www.' + lName + 'questions.com' ) #Example:  franklinquestions.com
+tryURL( 'http://www.' + fName + lName + 'questions.com' ) #Example:  joshfranklinquestions.com
+tryURL( 'http://www.' + fName + '.red' )          #Example:  josh.red
+tryURL( 'http://www.' + lName + '.red' )          #Example:  franklin.red
+tryURL( 'http://www.' + fName + lName + '.red' )  #Example:  joshfranklin.red
+tryURL( 'http://www.' + fName + '.blue' )         #Example:  josh.blue
+tryURL( 'http://www.' + lName + '.blue' )         #Example:  franklin.blue
+tryURL( 'http://www.' + fName + lName + '.blue' ) #Example:  joshfranklin.blue
 
-url = 'http://www.democrat' + fName + lName + '.com'
-url = stringAndStrip(url)
-print 'Trying: ' + url
-tryURL(url)
-
-url = 'http://www.libertarian' + fName + lName + '.com'
-url = stringAndStrip(url)
-print 'Trying: ' + url
-tryURL(url)
-
-url = 'http://www.independent' + fName + lName + '.com'
-url = stringAndStrip(url)
-print 'Trying: ' + url
-tryURL(url)
-
-#This looks for votejoshfranklin.com
-url = 'http://www.vote' + fName + lName + '.com'
-url = stringAndStrip(url)
-print 'Trying: ' + url
-tryURL(url)
-
-#This looks for votejosh.com
-url = 'http://www.vote' + fName + '.com'
-url = stringAndStrip(url)
-print 'Trying: ' + url
-tryURL(url)
-
-#This looks for votefranklin.com
-url = 'http://www.vote' + lName + '.com'
-url = stringAndStrip(url)
-print 'Trying: ' + url
-tryURL(url)
-
-#This looks for franklinpresident.com
-url = 'http://www.' + lName + position + '.com'
-url = stringAndStrip(url)
-print 'Trying: ' + url
-tryURL(url)
-
-#This looks for franklinprez.com
-url = 'http://www.' + lName + altPosition + '.com'
-url = stringAndStrip(url)
-print 'Trying: ' + url
-tryURL(url)
-
-#This looks for realjoshfranklin.com
-url = 'http://www.real' + fName + lName + '.com'
-url = stringAndStrip(url)
-print 'Trying: ' + url
-tryURL(url)
-
-#This looks for franklinforDC.com
-url = 'http://www.' + lName + 'for' + state + '.com'
-url = stringAndStrip(url)
-print 'Trying: ' + url
-tryURL(url)
-
-#This looks for franklin4DC.com
-url = 'http://www.' + lName + '4' + state + '.com'
-url = stringAndStrip(url)
-print 'Trying: ' + url
-tryURL(url)
-
-
-print str(len(allURLS)) + "\n" 
+print( ' Total URLS: ' + str(len(allURLS)) + "\n" )
 allURLS = removeDups( allURLS ) 
-print str(len(allURLS)) + "\n" 
+print( 'Unique URLS: ' + str(len(allURLS)) + "\n" )
 
-# Make the Pool of workers
-pool = ThreadPool(12) 
-
+pool = ThreadPool(16)
 # Open the urls in their own threads
 # and return the results
-results = pool.map(tryURLforReal, allURLS)
-
-#close the pool and wait for the work to finish 
-pool.close() 
-pool.join() 
-
+results = pool.map( tryURLforReal, allURLS )
+pool.close()
+pool.join()
 # Each tread added an entry for each result (found or not, gotta filter the blanks)
 # I'm doing this here sinced the file writes might not have been synchronized
 # its just a fear I had
@@ -773,42 +636,44 @@ for i in results:
 totalRuntime = time.time() - start_time, "seconds"
 
 ###### Write final results to logfile ###########
-resultsFile.write("######################################" + "\n")
-resultsFile.write("ElectionBuster v16 Scan Results: " + "\n")
-resultsFile.write("######################################" + "\n")
-resultsFile.write("INPUTS = " + str(fName) + ", " + str(lName) + ", " + str(year) + ", " + str(electionType) + str(state) + "\n") 
-resultsFile.write("Total runtime was " + str(totalRuntime) + "\n")
-resultsFile.write("There were " + str(len(confirmedURLs)) + " positive results." + "\n")
-resultsFile.write("There were " + str(len(testedURLs)) + " unique URLs tested." + "\n")
-resultsFile.write("-------------------------------------" + "\n")
-resultsFile.write("Positive results: " + "\n")
-resultsFile.write("-------------------------------------" + "\n")
+resultsFile.write( "######################################" + "\n" )
+resultsFile.write( "ElectionBuster Scan Results: " + "\n" )
+resultsFile.write( "######################################" + "\n" )
+resultsFile.write( "INPUTS = " + str(fName) + ", " + str(lName) + ", " + str(year) + ", " + str(electionType) + ", " + str(state) + "\n" )
+resultsFile.write( "Total runtime was " + str(totalRuntime) + "\n" )
+resultsFile.write( "There were " + str(len(confirmedURLs)) + " positive results." + "\n" )
+resultsFile.write( "There were " + str(len(testedURLs)) + " unique URLs tested." + "\n" )
+resultsFile.write( "-------------------------------------" + "\n" )
+resultsFile.write( "Positive results: " + "\n" )
+resultsFile.write( "-------------------------------------" + "\n" )
 for url in confirmedURLs:
-	resultsFile.write(str(url) + "\n")
-resultsFile.write("\n")
-resultsFile.write("-------------------------------------" + "\n")
-resultsFile.write("EOF " + "\n")
-				
+	resultsFile.write( str(url) + "\n" )
+resultsFile.write( "\n" )
+resultsFile.write( "-------------------------------------" + "\n" )
+resultsFile.write( "EOF " + "\n" )
+for url in allURLS:
+	resultsFile.write( str(url) + "\n" )
 ###### Print final results to screen ###########			
-print "###################################### " + "\n"
-print "ElectionBuster v16 Scan Results: " + "\n"
-print "###################################### " + "\n"
-print "INPUTS" + "\n"
-print "First name: " + fName + "\n"
-print "Last name: " + lName + "\n"
-print "Year: " + year + "\n"
-print "Election type: " + electionType + "\n"
-print "-------------------------------------" + "\n"
-print "Total runtime was " + str(totalRuntime) + "\n"
-print "-------------------------------------" + "\n"
-print "Positive results: " + "\n"
-print "There were " + str(len(confirmedURLs)) + " hits:" + "\n"
-print "-------------------------------------" + "\n"
+print( "###################################### " + "\n" )
+print( "ElectionBuster Scan Results: " + "\n" )
+print( "###################################### " + "\n" )
+print( "INPUTS" + "\n" )
+print( "First name: " + fName + "\n" )
+print( "Last name: " + lName + "\n" )
+print( "Year: " + year + "\n" )
+print( "Election type: " + electionType + "\n" )
+print( "-------------------------------------" + "\n" )
+print( "Total runtime was " + str(totalRuntime) + "\n" )
+print( "-------------------------------------" + "\n" )
+print( "Positive results: " + "\n" )
+print( "There were " + str(len(confirmedURLs)) + " hits:" + "\n" )
+print( "-------------------------------------" + "\n" )
+print( "\n" )
 for url in confirmedURLs:
-	print url
-print "\n"
+	print( url )
+print( "\n" )
 #TODO: Parse goodResults.txt's pages and look for GoDaddy, Bluehost pages 
-#TODO: Take screenshots
 
 # Bad things happen if these files are not properly closed
 resultsFile.close()
+
