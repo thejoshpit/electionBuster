@@ -23,7 +23,6 @@ import socket
 from datetime import date
 import urllib 
 from multiprocessing import Pool as ThreadPool 
-from pythonparser import NameDenormalizer
 
 # Program Timer
 start_time = time.time()
@@ -582,7 +581,7 @@ print( ' Total URLS: ' + str(len(allURLS)) + "\n" )
 allURLS = removeDups( allURLS ) 
 print( 'Unique URLS: ' + str(len(allURLS)) + "\n" )
 
-pool = ThreadPool(16)
+pool = ThreadPool(64)
 # Open the urls in their own threads
 # and return the results
 results = pool.map( tryURLforReal, allURLS )
