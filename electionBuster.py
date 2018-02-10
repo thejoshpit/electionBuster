@@ -23,6 +23,7 @@ import socket
 from datetime import date
 import urllib 
 from multiprocessing import Pool as ThreadPool 
+from pythonparser import NameDenormalizer
 
 # Program Timer
 start_time = time.time()
@@ -35,8 +36,9 @@ def stringAndStrip(input):
 
 def tryURL(url) :
 	url = stringAndStrip(url)
-	print('Trying: ' + url)
-	allURLS.append( url)
+	for domain_name in tlds:
+		print('Trying: ' + url + domain_name )
+		allURLS.append( url + domain_name )
 	
 def tryURLforReal(url) : 
 	fetchResult = ""
@@ -78,8 +80,7 @@ def genAll(website_names, alphabets):
 	for s in website_names:
 		for a in alphabets:
 			mangled_name = gen(s, a)
-			for domain_name_ending in tlds:
-				results.append( mangled_name + '.' + domain_name_ending )
+			results.append( mangled_name )
 	return results
 
 def genAllDonate(website_names, alphabets):
@@ -87,8 +88,7 @@ def genAllDonate(website_names, alphabets):
 	for s in website_names:
 		for a in alphabets:
 			mangled_name = gen(s, a)
-			for domain_name_ending in tlds:
-				results.append( mangled_name + 'donate.' + domain_name_ending )
+			results.append( mangled_name + 'donate' )
 	return results
 
 # This function returns strings with each character missing
@@ -207,6 +207,8 @@ elif (electionType == 'mayoral') or (electionType == 'mayor') :
 else : 
 	position = electionType
 	altPosition = electionType
+# top-level domain-names
+tlds = ['.com', '.net', '.me' , '.org', '.net', '.biz', '.info', '.us', '.ru', '.cn', '.kp' ]
 
 # Runs stringAndStrip on everything except fileName b/c that's used elsewhere
 fName = stringAndStrip(fName)
@@ -362,8 +364,6 @@ else :
 		lName + '4' + position
 	]
 
-# top-level domain-names
-tlds = ['com', 'net', 'me' , 'org', 'net', 'biz', 'info', 'us' ]
 
 # This generates the text mangling
 results = genAll( templates, alt_alphabets)
@@ -464,154 +464,119 @@ reverseResults3 = reverseLetter(typoFirstLastYear)
 #print "There were " + str(len(skippedURLs)) + " skipped so far."
 print( "Entering vowel loop")
 for r in vowelResults1 : 
-	for tld in tlds:
-		tryURL( 'http://www.' + r + '.' + tld )
+	tryURL( 'http://www.' + r )
 
 print("Entering skip loop")
 for r in skipResults1 : 
-	for tld in tlds:
-		tryURL( 'http://www.' + r + '.' + tld )
+	tryURL( 'http://www.' + r )
 
 print( "Entering double loop")
 for r in doubleResults1 : 
-	for tld in tlds:
-		tryURL( 'http://www.' + r + '.' + tld )
+	tryURL( 'http://www.' + r )
 
 print("Entering insert loop")
 for r in insertResults1 : 
-	for tld in tlds:
-		tryURL( 'http://www.' + r + '.' + tld )
+	tryURL( 'http://www.' + r )
 
 print( "Entering sub loop")
 for r in subResults1 : 
-	for tld in tlds:
-		tryURL( 'http://www.' + r + '.' + tld )
+	tryURL( 'http://www.' + r )
 
 print("Entering reverse loop")
 for r in reverseResults1 : 
-	for tld in tlds:
-		tryURL( 'http://www.' + r + '.' + tld )
+	tryURL( 'http://www.' + r )
 					
 ### Typo loop 2 ###
 #print "There were " + str(len(skippedURLs)) + " skipped so far."
 print( "Entering vowel loop")
 for r in vowelResults2 : 
-	for tld in tlds:
-		tryURL( 'http://www.' + r + '.' + tld )
+	tryURL( 'http://www.' + r )
 
 print( "Entering skip loop")
 for r in skipResults2 : 
-	for tld in tlds:
-		tryURL( 'http://www.' + r + '.' + tld )
+	tryURL( 'http://www.' + r )
 
 print("Entering double loop")
 for r in doubleResults2 : 
-	for tld in tlds:
-		tryURL( 'http://www.' + r + '.' + tld )
+	tryURL( 'http://www.' + r )
 
 print("Entering insert loop")
 for r in insertResults2 : 
-	for tld in tlds:
-		tryURL( 'http://www.' + r + '.' + tld )
+	tryURL( 'http://www.' + r )
 
 print( "Entering sub loop")
 for r in subResults2 : 
-	for tld in tlds:
-		tryURL( 'http://www.' + r + '.' + tld )
+	tryURL( 'http://www.' + r )
 
 print("Entering reverse loop")
 for r in reverseResults2 : 
-	for tld in tlds:
-		tryURL( 'http://www.' + r + '.' + tld )
+	tryURL( 'http://www.' + r )
 
 ### Typo loop 3 ###
 #print "There were " + str(len(skippedURLs)) + " skipped so far."
 print( "Entering vowel loop")
 for r in vowelResults3 : 
-	for tld in tlds:
-		tryURL( 'http://www.' + r + '.' + tld )
+	tryURL( 'http://www.' + r )
 
 print( "Entering skip loop")
 for r in skipResults3 : 
-	for tld in tlds:
-		tryURL( 'http://www.' + r + '.' + tld )
+	tryURL( 'http://www.' + r )
 
 print( "Entering double loop")
 for r in doubleResults3 : 
-	for tld in tlds:
-		tryURL( 'http://www.' + r + '.' + tld )
+	tryURL( 'http://www.' + r )
 
 print( "Entering insert loop")
 for r in insertResults3 : 
-	for tld in tlds:
-		tryURL( 'http://www.' + r + '.' + tld )
+	tryURL( 'http://www.' + r )
 
 print( "Entering sub loop")
 for r in subResults3 : 
-	url = 'http://www.' + r
-	for tld in tlds:
-		tryURL( url + '.' + tld )
+	tryURL( 'http://www.' + r )
 
 print( "Entering reverse loop")
 for r in reverseResults3 : 
-	for tld in tlds:
-		tryURL( 'http://www.' + r + '.' + tld )
+	tryURL( 'http://www.' + r )
 
 ### CORNER CASES ###
 # The following looks for odd domains that I've noticed 
-tryURL( 'http://www.team' + fName + '.com' ) # Example:  'teamfranklin'
-tryURL( 'http://www.team' + lName + '.com' )
-tryURL( 'http://www.team' + fName + lName + '.com' )
+tryURL( 'http://www.team' + fName ) # Example:  'teamfranklin'
+tryURL( 'http://www.team' + lName )
+tryURL( 'http://www.team' + fName + lName )
 
 # Example:  'repfranklin' 
 # It's easier just to include for everyone, even if they are not in a congressional race
-tryURL( 'http://www.rep' + fName + '.com' )
-tryURL( 'http://www.rep' + lName + '.com' )
-tryURL( 'http://www.rep' + fName + lName + '.com' )
+tryURL( 'http://www.rep' + fName )
+tryURL( 'http://www.rep' + lName )
+tryURL( 'http://www.rep' + fName + lName )
+
+#expand the tlds a little
+tlds.append( '.republican' )
+tlds.append( '.democrat' )
+tlds.append( '.red' )
+tlds.append( '.blue' )
+tlds.append( '.vote' )
 
 #These next few look for some of the larger parties
-tryURL( 'http://www.republican' + fName + lName + '.com' )
-tryURL( 'http://www.democrat' + fName + lName + '.com' )
-tryURL( 'http://www.libertarian' + fName + lName + '.com' )
-tryURL( 'http://www.independent' + fName + lName + '.com' )
-tryURL( 'http://www.vote' + fName + lName + '.com' )   #Example:  votejoshfranklin.com
-tryURL( 'http://www.vote' + fName + '.com' )           #Example:  votejosh.com
-tryURL( 'http://www.vote' + lName + '.com' )           #Example:  votefranklin.com
-tryURL( 'http://www.' + lName + position + '.com' )    #Example:  franklinpresident.com
-tryURL( 'http://www.' + lName + altPosition + '.com' ) #Example:  franklinprez.com
-tryURL( 'http://www.real' + fName + lName + '.com' )   #Example:  realjoshfranklin.com
-tryURL( 'http://www.' + lName + 'for' + state + '.com' ) #Example:  franklinforDC.com
-tryURL( 'http://www.' + lName + '4' + state + '.com' ) #Example:  franklin4DC.com
-tryURL( 'http://www.friendsof' + fName + '.com' ) #Example:  friendsofjosh.com
-tryURL( 'http://www.friendsof' + fName + '.net' ) #Example:  friendsofjosh.net
-tryURL( 'http://www.friendsof' + fName + '.org' ) #Example:  friendsofjosh.org
-tryURL( 'http://www.friendsof' + lName + '.com' ) #Example:  friendsoffranklin.com
-tryURL( 'http://www.friendsof' + lName + '.net' ) #Example:  friendsoffranklin.net
-tryURL( 'http://www.friendsof' + lName + '.org' ) #Example:  friendsoffranklin.org
-tryURL( 'http://www.' + fName + 'sucks.com' ) #Example:  joshsucks.com
-tryURL( 'http://www.' + fName + 'sucks.net' ) #Example:  joshsucks.net
-tryURL( 'http://www.' + fName + 'sucks.org' ) #Example:  joshsucks.org
-tryURL( 'http://www.' + lName + 'sucks.com' ) #Example:  franklinsucks.com
-tryURL( 'http://www.' + lName + 'sucks.net' ) #Example:  franklinsucks.net
-tryURL( 'http://www.' + lName + 'sucks.org' ) #Example:  franklinsucks.org
-tryURL( 'http://www.' + fName + '.vote' )     #Example:  josh.vote
-tryURL( 'http://www.' + lName + '.vote' )     #Example:  franklin.vote
-tryURL( 'http://www.' + fName + lName + '.vote' ) #Example:  joshfranklin.vote
-tryURL( 'http://www.' + fName + '.republican' )   #Example:  josh.republican
-tryURL( 'http://www.' + lName + '.republican' )   #Example:  franklin.republican
-tryURL( 'http://www.' + fName + lName + '.republican' ) #Example:  joshfranklin.republican
-tryURL( 'http://www.' + fName + '.democrat' ) #Example:  josh.democrat
-tryURL( 'http://www.' + lName + '.democrat' ) #Example:  franklin.democrat
-tryURL( 'http://www.' + fName + lName + '.democrat' ) #Example:  joshfranklin.democrat
-tryURL( 'http://www.' + fName + 'questions.com' ) #Example:  joshquestions.com
-tryURL( 'http://www.' + lName + 'questions.com' ) #Example:  franklinquestions.com
-tryURL( 'http://www.' + fName + lName + 'questions.com' ) #Example:  joshfranklinquestions.com
-tryURL( 'http://www.' + fName + '.red' )          #Example:  josh.red
-tryURL( 'http://www.' + lName + '.red' )          #Example:  franklin.red
-tryURL( 'http://www.' + fName + lName + '.red' )  #Example:  joshfranklin.red
-tryURL( 'http://www.' + fName + '.blue' )         #Example:  josh.blue
-tryURL( 'http://www.' + lName + '.blue' )         #Example:  franklin.blue
-tryURL( 'http://www.' + fName + lName + '.blue' ) #Example:  joshfranklin.blue
+tryURL( 'http://www.republican' + fName + lName )
+tryURL( 'http://www.democrat' + fName + lName )
+tryURL( 'http://www.libertarian' + fName + lName )
+tryURL( 'http://www.independent' + fName + lName )
+tryURL( 'http://www.vote' + fName + lName )   #Example:  votejoshfranklin.com
+tryURL( 'http://www.vote' + fName )           #Example:  votejosh.com
+tryURL( 'http://www.vote' + lName )           #Example:  votefranklin.com
+tryURL( 'http://www.' + lName + position )    #Example:  franklinpresident.com
+tryURL( 'http://www.' + lName + altPosition ) #Example:  franklinprez.com
+tryURL( 'http://www.real' + fName + lName )   #Example:  realjoshfranklin.com
+tryURL( 'http://www.' + lName + 'for' + state ) #Example:  franklinforDC.com
+tryURL( 'http://www.' + lName + '4' + state ) #Example:  franklin4DC.com
+tryURL( 'http://www.friendsof' + fName ) #Example:  friendsofjosh.com
+tryURL( 'http://www.friendsof' + lName ) #Example:  friendsofjosh.com
+tryURL( 'http://www.' + fName + 'sucks' ) #Example:  joshsucks.com
+tryURL( 'http://www.' + lName + 'sucks' ) #Example:  franklinsucks.com
+tryURL( 'http://www.' + fName )     #Example:  josh.vote
+tryURL( 'http://www.' + lName )     #Example:  franklin.vote
+tryURL( 'http://www.' + fName + lName ) #Example:  joshfranklin.vote
 
 print( ' Total URLS: ' + str(len(allURLS)) + "\n" )
 allURLS = removeDups( allURLS ) 
@@ -640,13 +605,13 @@ resultsFile.write( "ElectionBuster Scan Results: " + "\n" )
 resultsFile.write( "######################################" + "\n" )
 resultsFile.write( "INPUTS = " + str(fName) + ", " + str(lName) + ", " + str(year) + ", " + str(electionType) + ", " + str(state) + "\n" )
 resultsFile.write( "Total runtime was " + str(totalRuntime) + "\n" )
-resultsFile.write( "There were " + str(len(confirmedURLs)) + " positive results." + "\n" )
-resultsFile.write( "There were " + str(len(testedURLs)) + " unique URLs tested." + "\n" )
-resultsFile.write( "-------------------------------------" + "\n" )
-resultsFile.write( "Positive results: " + "\n" )
-resultsFile.write( "-------------------------------------" + "\n" )
-for url in confirmedURLs:
-	resultsFile.write( str(url) + "\n" )
+#resultsFile.write( "There were " + str(len(confirmedURLs)) + " positive results." + "\n" )
+#resultsFile.write( "There were " + str(len(testedURLs)) + " unique URLs tested." + "\n" )
+#resultsFile.write( "-------------------------------------" + "\n" )
+#resultsFile.write( "Positive results: " + "\n" )
+#resultsFile.write( "-------------------------------------" + "\n" )
+#for url in confirmedURLs:
+#	resultsFile.write( str(url) + "\n" )
 resultsFile.write( "\n" )
 resultsFile.write( "-------------------------------------" + "\n" )
 resultsFile.write( "EOF " + "\n" )
@@ -668,9 +633,9 @@ print( "Positive results: " + "\n" )
 print( "There were " + str(len(confirmedURLs)) + " hits:" + "\n" )
 print( "-------------------------------------" + "\n" )
 print( "\n" )
-for url in confirmedURLs:
-	print( url )
-print( "\n" )
+#for url in confirmedURLs:
+#	print( url )
+#print( "\n" )
 #TODO: Parse goodResults.txt's pages and look for GoDaddy, Bluehost pages 
 
 # Bad things happen if these files are not properly closed
