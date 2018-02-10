@@ -11,7 +11,6 @@
 ## 4: The type of race (e.g., congress, senate, president)
 ## 5: The state or region the candidate is from
 ##################################################
-# Notes: Move tlds to tryURL such that we try all tlds for each url generated
 
 import requests 
 import sys
@@ -205,7 +204,9 @@ elif (electionType == 'mayoral') or (electionType == 'mayor') :
 else : 
 	position = electionType
 	altPosition = electionType
+	
 # top-level domain-names
+# # consider removing .me, .info, and .biz if they aren't adding value 
 tlds = ['.com', '.net', '.me' , '.org', '.net', '.biz', '.info', '.us', '.ru', '.cn', '.kp' ]
 
 # Runs stringAndStrip on everything except fileName b/c that's used elsewhere
@@ -215,7 +216,8 @@ year = stringAndStrip(year)
 electionType = stringAndStrip(electionType)
 state = stringAndStrip(state)
 
-# Expected URLs (obviously the list is different if the state var exists).
+# Alerting the users to the types of sites we're expecting to find 
+# This differs at times since the state variable isn't mandatory to run the script 
 if (args.state) : 
 	print('We expect to find these URLs excluding subtle variances:')
 	print('http://www.' + fName + lName + '.com')
@@ -255,14 +257,17 @@ resultsFile = open(tempResults, "a")
 
 # Need a base alphabet for the first set of mangling functions
 alphabet = "abcdefghijklmnopqrstuvwxyz0123456789"
+
+#sometimes "y" because it makes kevin angry 
 vowels = "aeiouy"
 
 confirmedURLs = []
 testedURLs = []
-#skippedURLs = []  Does not appear to be used
 allURLS = []
-  
-# alternative alphabets
+
+## Other alphabets are defined as a quick way of doing URL mangling. 
+## Is this a candidate for deletion? 
+# alternative alphabets 
 # 0: No change
 # 1: i -> 1 "Eye to One"
 # 2: l -> i "El to Eye"
