@@ -39,10 +39,9 @@ def tryURL(url) :
 	allURLS.append( url)
 	
 def tryURLforReal(url) : 
-	global testedURLs
-	global confirmedURLs
 	fetchResult = ""
 	if url not in testedURLs :
+		testedURLs.append(url)
 		try: 
 			#Open input URL
 			httpResponse = requests.get(url, timeout=10)
@@ -53,7 +52,6 @@ def tryURLforReal(url) :
 			fetchResult = fetchResult + "*************************************************+" + "\n"
 			print(fetchResult)
 			confirmedURLs.append(url)
-			testedURLs.append(url)
 
 			return fetchResult 
 		except requests.exceptions.RequestException as e:    # This is the correct syntax
