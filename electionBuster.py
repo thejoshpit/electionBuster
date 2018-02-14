@@ -237,7 +237,7 @@ else :
 	
 # top-level domain-names
 # # consider removing .me, .info, and .biz if they aren't adding value 
-tlds = ['.com', '.net', '.me' , '.org', '.net', '.biz', '.info', '.us', '.ru', '.cn', '.kp' ]
+tlds = ['.com', '.net', '.me' , '.org', '.net', '.biz', '.info', '.us' ]
 
 # Runs stringAndStrip on everything except fileName b/c that's used elsewhere
 fName = stringAndStrip(fName)
