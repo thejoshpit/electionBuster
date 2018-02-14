@@ -33,15 +33,14 @@ class NameDenormalizer(object):
 			reader = csv.reader(f)
 			for line in reader:
 				matches = set(line)
-			for match in matches:
-				lookup[match].append(matches)
+				for match in matches:
+					lookup[match].append(matches)
 		self.lookup = lookup
 	def __getitem__(self, name):
 		name = name.upper()
 		if name not in self.lookup:
 			raise KeyError(name)
-			names = reduce(operator.or_, self.lookup[name])
-		return names
+		return self.lookup[name]
 
 	def get(self, name, default=None):
 		try:
@@ -204,11 +203,14 @@ lName = lName.lower()
 year = args.year
 electionType = args.electionType
 electionType = electionType.lower()
-state = ""
+state = []
 if (args.state) :
-        state = args.state
-        state = stringAndStrip(state)
-        state = state.lower()
+	state.append( stringAndStrip( args.state.upper() ) )
+	nd = NameDenormalizer( "states.csv" )
+	statenick = list( nd.get( args.state.upper() ) )
+	for s1 in statenick:
+		for s in s1:
+			state.append( s )
 if (args.fileName) :
         fileName = args.fileName
         fileName = stringAndStrip(fileName)
@@ -242,7 +244,6 @@ fName = stringAndStrip(fName)
 lName = stringAndStrip(lName)
 year = stringAndStrip(year)
 electionType = stringAndStrip(electionType)
-state = stringAndStrip(state)
 
 # Alerting the users to the types of sites we're expecting to find 
 # This differs at times since the state variable isn't mandatory to run the script 
@@ -253,8 +254,8 @@ if (args.state) :
 	print('http://www.' + fName + year + '.com')
 	print('http://www.' + lName + year + '.com')
 	print('http://www.' + fName + lName + year + '.com' )
-	print('http://www.' + fName + lName + 'for' + state + '.com')
-	print('http://www.' + fName + lName + state + '.com')
+	for stateAlias in state:
+		print('http://www.' + fName + lName + 'for' + stateAlias + '.com')
 	print('http://www.' + fName + lName + 'for' + position + '.com')
 	print('http://www.' + fName + 'for' + position + '.com')
 	print('http://www.' + fName + 'for' + position + year + '.com')
@@ -274,7 +275,7 @@ else :
 # This is the result output files
 # Makes a unique filename based on data and time
 now = date.today()
-tempResults = 'results-' + fName + '-' + lName + '-' + state + '-' + str(now) + '.txt'
+tempResults = 'results-' + fName + '-' + lName + '-' + args.state + '-' + str(now) + '.txt'
 
 resultsFile = open(tempResults, "w")
 
@@ -321,41 +322,41 @@ alt_alphabets = [ 	'abcdefghijklmnopqrstuvwxyz1234567890',
 # These are the template names - refer to Loop 1 for examples
 
 if (args.state) : 
-	templates = [
-		fName + lName,
-		fName + '-' + lName, 
-		lName + fName,
-		lName + '-' + fName, 
-		fName + year,
-		lName + year,
-		fName + lName + year, 
-		fName + '-' + lName + year, 
-		fName + lName + 'for' + state,
-		fName + '-' + lName + 'for' + state, 
-		fName + lName + '4' + state,
-		fName + '-' + lName + '4' + state,
-		fName + lName + state, 
-		fName + '-' + lName + state, 
-		fName + lName + 'for' + position, 
-		fName + '-' + lName + 'for' + position, 
-		fName + lName + '4' + position,
-		fName + '-' + lName + '4' + position,
-		fName + 'for' + position,
-		fName + '4' + position,
-		fName + 'for' + position + year,
-		fName + '4' + position + year, 
-		position + fName + lName, 
-		position + '-' + fName + lName, 
-		position + fName + '-' + lName, 
-		position + '-' + fName + '-' + lName,
-		fName + lName + 'for' + altPosition, 
-		fName + lName + '4' + altPosition, 
-		fName + 'for' + altPosition,
-		fName + '4' + altPosition,
-		lName + 'for' + altPosition,
-		lName + 'for' + position,
-		lName + '4' + position
-	]
+	templates = []
+	templates.append( fName + lName )
+	templates.append( fName + '-' + lName )
+	templates.append( lName + fName )
+	templates.append( lName + '-' + fName )
+	templates.append( fName + year )
+	templates.append( lName + year )
+	templates.append( fName + lName + year )
+	templates.append( fName + '-' + lName + year )
+	for stateAlias in state:
+		templates.append( fName + lName + 'for' + stateAlias )
+		templates.append( fName + '-' + lName + 'for' + stateAlias )
+		templates.append( fName + lName + '4' + stateAlias )
+		templates.append( fName + '-' + lName + '4' + stateAlias )
+		templates.append( fName + lName + stateAlias )
+		templates.append( fName + '-' + lName + stateAlias )
+	templates.append( fName + lName + 'for' + position )
+	templates.append( fName + '-' + lName + 'for' + position )
+	templates.append( fName + lName + '4' + position )
+	templates.append( fName + '-' + lName + '4' + position )
+	templates.append( fName + 'for' + position )
+	templates.append( fName + '4' + position )
+	templates.append( fName + 'for' + position + year )
+	templates.append( fName + '4' + position + year )
+	templates.append( position + fName + lName )
+	templates.append( position + '-' + fName + lName )
+	templates.append( position + fName + '-' + lName )
+	templates.append( position + '-' + fName + '-' + lName )
+	templates.append( fName + lName + 'for' + altPosition )
+	templates.append( fName + lName + '4' + altPosition )
+	templates.append( fName + 'for' + altPosition )
+	templates.append( fName + '4' + altPosition )
+	templates.append( lName + 'for' + altPosition )
+	templates.append( lName + 'for' + position )
+	templates.append( lName + '4' + position )
 else :  
 	templates = [
 		fName + lName,
@@ -599,8 +600,9 @@ tryURL( 'http://www.vote' + lName )           #Example:  votefranklin.com
 tryURL( 'http://www.' + lName + position )    #Example:  franklinpresident.com
 tryURL( 'http://www.' + lName + altPosition ) #Example:  franklinprez.com
 tryURL( 'http://www.real' + fName + lName )   #Example:  realjoshfranklin.com
-tryURL( 'http://www.' + lName + 'for' + state ) #Example:  franklinforDC.com
-tryURL( 'http://www.' + lName + '4' + state ) #Example:  franklin4DC.com
+for stateAlias in state:
+	tryURL( 'http://www.' + lName + 'for' + stateAlias ) #Example:  franklinforDC.com
+	tryURL( 'http://www.' + lName + '4' + stateAlias ) #Example:  franklin4DC.com
 tryURL( 'http://www.friendsof' + fName ) #Example:  friendsofjosh.com
 tryURL( 'http://www.friendsof' + lName ) #Example:  friendsofjosh.com
 tryURL( 'http://www.' + fName + 'sucks' ) #Example:  joshsucks.com
@@ -634,7 +636,7 @@ totalRuntime = time.time() - start_time, "seconds"
 resultsFile.write( "######################################" + "\n" )
 resultsFile.write( "ElectionBuster Scan Results: " + "\n" )
 resultsFile.write( "######################################" + "\n" )
-resultsFile.write( "INPUTS = " + str(fName) + ", " + str(lName) + ", " + str(year) + ", " + str(electionType) + ", " + str(state) + "\n" )
+resultsFile.write( "INPUTS = " + str(fName) + ", " + str(lName) + ", " + str(year) + ", " + str(electionType) + ", " + str(args.state) + "\n" )
 resultsFile.write( "Total runtime was " + str(totalRuntime) + "\n" )
 #resultsFile.write( "There were " + str(len(confirmedURLs)) + " positive results." + "\n" )
 #resultsFile.write( "There were " + str(len(testedURLs)) + " unique URLs tested." + "\n" )
