@@ -14,18 +14,9 @@ Example types of candidate URLs it looks for are:
 - josh2014.com
 - franklin2014.com
 - joshfranklin2014.com
-- joshfranklinforDC.com
-- joshfranklinDC.com
 - joshforpresident.com
 - josh4president.com
-- joshforpresident2014.com
-- josh4president2014.com
-- presidentjoshfranklin.com
 - president-josh-franklin.com
-- presidentjoshforpresident2014.com
-- presidentjosh4president2014.com
-- presidentjoshfranklinforpresident2014.com
-- presidentjosh-franklinforpresident2014.com
 - presidentjoshfranklin4president2014.com
 - presidentjosh-franklin4president2014.com
 
@@ -43,9 +34,9 @@ At DEFCON last year, folks were finding sensitive election documentation online.
 
 Election Buster Prime 
 - New Domains: .ru, .cn, .link, .io, .pk, .pl, .top (COMPLETE) 
-- Update WhoIs capture and storage 
+- Update WhoIs capture and storage (COMPLETE - No longer using WhoAreThey.py)
 - Figure out when domains were first registered 
-- IP address capture  
+- IP address capture (COMPLETE)   
 - Compare IP addresses of hosted domains
 - Possibly embed IP address and whois info into the picture 
 - HTML capture (COMPLETE) 
