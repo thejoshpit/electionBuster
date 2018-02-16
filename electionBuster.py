@@ -191,9 +191,8 @@ parser.add_argument('-m','--middleName',help='Candidate\'s optional middle name'
 parser.add_argument('-l','--lastName',help='Candidate\'s last name', required=True)
 parser.add_argument('-y','--year', help='Year of the election',required=True)
 parser.add_argument('-e','--electionType',help='Type of election (congress, senate, president)', required=True)
-parser.add_argument('-s','--state', help='Candidate\'s state of origin')
+parser.add_argument('-s','--state', help='Candidate\'s state of origin', action='append' )
 #Exists for candidates like Mitt Romney that possibly have an attachment to two states (i.e., Utah, Massachusetts) 
-parser.add_argument('-s2','--secondState', help='Candidate\'s optional second state of origin')
 parser.add_argument('-file','--fileName', help='Filename containing a list of candidates')
 args = parser.parse_args()
 
@@ -208,13 +207,16 @@ year = args.year
 electionType = args.electionType
 electionType = electionType.lower()
 state = []
+stateText = ""
 if (args.state) :
-	state.append( stringAndStrip( args.state.upper() ) )
 	nd = NameDenormalizer( "states.csv" )
-	statenick = list( nd.get( args.state.upper() ) )
-	for s1 in statenick:
-		for s in s1:
-			state.append( s )
+	for aState in args.state:
+		stateText = stateText + aState.upper()
+		state.append( stringAndStrip( aState.upper( ) ) )
+		statenick = list( nd.get( aState.upper() ) )
+		for s1 in statenick:
+			for s in s1:
+				state.append( s )
 if (args.fileName) :
         fileName = args.fileName
         fileName = stringAndStrip(fileName)
@@ -222,10 +224,6 @@ if (args.fileName) :
 if (args.middleName) :
 	mName = args.middleName
 	mName = mName.lower()
-
-if (args.middleName) :
-	secondState = args.secondState
-	secondState = secondState.lower()
 
 # This assigns the position variable
 if (electionType == 'congress') or (electionType == 'congressional') : 
@@ -287,7 +285,7 @@ else :
 # This is the result output files
 # Makes a unique filename based on data and time
 now = date.today()
-tempResults = 'results-' + fName + '-' + lName + '-' + args.state + '-' + str(now) + '.txt'
+tempResults = 'results-' + fName + '-' + lName + '-' + stateText + '-' + str(now) + '.txt'
 
 resultsFile = open(tempResults, "w")
 
@@ -648,7 +646,7 @@ totalRuntime = time.time() - start_time, "seconds"
 resultsFile.write( "######################################" + "\n" )
 resultsFile.write( "ElectionBuster Scan Results: " + "\n" )
 resultsFile.write( "######################################" + "\n" )
-resultsFile.write( "INPUTS = " + str(fName) + ", " + str(lName) + ", " + str(year) + ", " + str(electionType) + ", " + str(args.state) + "\n" )
+resultsFile.write( "INPUTS = " + str(fName) + ", " + str(lName) + ", " + str(year) + ", " + str(electionType) + ", " + str(stateText) + "\n" )
 resultsFile.write( "Total runtime was " + str(totalRuntime) + "\n" )
 #resultsFile.write( "There were " + str(len(confirmedURLs)) + " positive results." + "\n" )
 #resultsFile.write( "There were " + str(len(testedURLs)) + " unique URLs tested." + "\n" )
