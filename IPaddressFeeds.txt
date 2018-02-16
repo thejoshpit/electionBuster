@@ -1,0 +1,4 @@
+https://ransomwaretracker.abuse.ch/downloads/RW_IPBL.txt
+http://osint.bambenekconsulting.com/feeds/c2-ipmasterlist.txt
+http://www.nothink.org/blacklist/blacklist_telnet_year.txt
+http://malc0de.com/bl/IP_Blacklist.txt
