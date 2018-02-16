@@ -187,10 +187,13 @@ def substitution(s):
 #Parse command line arguments
 parser = argparse.ArgumentParser(description='Identifies registered candidate domains')
 parser.add_argument('-f','--firstName', help='Candidate\'s first name',required=True)
+parser.add_argument('-m','--middleName',help='Candidate\'s optional middle name')
 parser.add_argument('-l','--lastName',help='Candidate\'s last name', required=True)
 parser.add_argument('-y','--year', help='Year of the election',required=True)
 parser.add_argument('-e','--electionType',help='Type of election (congress, senate, president)', required=True)
 parser.add_argument('-s','--state', help='Candidate\'s state of origin')
+#Exists for candidates like Mitt Romney that possibly have an attachment to two states (i.e., Utah, Massachusetts) 
+parser.add_argument('-s2','--secondState', help='Candidate\'s optional second state of origin')
 parser.add_argument('-file','--fileName', help='Filename containing a list of candidates')
 args = parser.parse_args()
 
@@ -198,6 +201,7 @@ args = parser.parse_args()
 # Make all lowercase
 fName = args.firstName
 fName = fName.lower()
+
 lName = args.lastName
 lName = lName.lower()
 year = args.year
@@ -214,6 +218,14 @@ if (args.state) :
 if (args.fileName) :
         fileName = args.fileName
         fileName = stringAndStrip(fileName)
+
+if (args.middleName) :
+	mName = args.middleName
+	mName = mName.lower()
+
+if (args.middleName) :
+	secondState = args.secondState
+	secondState = secondState.lower()
 
 # This assigns the position variable
 if (electionType == 'congress') or (electionType == 'congressional') : 
