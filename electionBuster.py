@@ -325,7 +325,7 @@ alt_alphabets = [ 	'abcdefghijklmnopqrstuvwxyz1234567890',
 			'abcdefghijklmn0pqrstuvwxyz1234567890',
 			'abcdefghijklmnopqrstuvwxyz123456789o',
 			'abcdefghijklmmopqrstuvwxyz1234567890',
-			'abcdefghijklnnopqrstuvwxyz1234567890',				  
+			'abcdefghijklnnopqrstuvwxyz1234567890',
 			'abcd3fghijklmnopqrstuvwxyz1234567890',
 			'abcdefghijklmnopqrstuvwxyz12e4567890']
 
@@ -368,43 +368,42 @@ if (args.state) :
 	templates.append( lName + 'for' + position )
 	templates.append( lName + '4' + position )
 else :  
-	templates = [
-		fName + lName,
-		fName + '-' + lName, 
-		lName + fName,
-		lName + '-' + fName, 
-		fName + year,
-		lName + year,
-		fName + lName + year, 
-		fName + '-' + lName + year, 
-		fName + lName + 'for' + position, 
-		fName + '-' + lName + 'for' + position, 
-		fName + lName + '4' + position,
-		fName + '-' + lName + '4' + position,
-		fName + 'for' + position,
-		fName + '4' + position,
-		fName + 'for' + position + year,
-		fName + '4' + position + year, 
-		position + fName + lName, 
-		position + '-' + fName + lName, 
-		position + fName + '-' + lName, 
-		'vote' + fName,
-		'vote' + lName,
-		'votefor' + fName,
-		'votefor' + lName,
-		'votefor' + fName + lName,
-		'vote4' + fName,
-		'vote4' + lName,
-		'vote4' + fName + lName,
-		position + '-' + fName + '-' + lName,
-		fName + lName + 'for' + altPosition, 
-		fName + lName + '4' + altPosition, 
-		fName + 'for' + altPosition,
-		fName + '4' + altPosition,
-		lName + 'for' + altPosition,
-		lName + 'for' + position,
-		lName + '4' + position
-	]
+	templates = []
+	templates.append( fName + lName )
+	templates.append( fName + '-' + lName )
+	templates.append( lName + fName )
+	templates.append( lName + '-' + fName )
+	templates.append( fName + year )
+	templates.append( lName + year )
+	templates.append( fName + lName + year )
+	templates.append( fName + '-' + lName + year )
+	templates.append( fName + lName + 'for' + position )
+	templates.append( fName + '-' + lName + 'for' + position )
+	templates.append( fName + lName + '4' + position )
+	templates.append( fName + '-' + lName + '4' + position )
+	templates.append( fName + 'for' + position )
+	templates.append( fName + '4' + position )
+	templates.append( fName + 'for' + position + year )
+	templates.append( fName + '4' + position + year )
+	templates.append( position + fName + lName )
+	templates.append( position + '-' + fName + lName )
+	templates.append( position + fName + '-' + lName )
+	templates.append( 'vote' + fName )
+	templates.append( 'vote' + lName )
+	templates.append( 'votefor' + fName )
+	templates.append( 'votefor' + lName )
+	templates.append( 'votefor' + fName + lName )
+	templates.append( 'vote4' + fName )
+	templates.append( 'vote4' + lName )
+	templates.append( 'vote4' + fName + lName )
+	templates.append( position + '-' + fName + '-' + lName )
+	templates.append( fName + lName + 'for' + altPosition )
+	templates.append( fName + lName + '4' + altPosition )
+	templates.append( fName + 'for' + altPosition )
+	templates.append( fName + '4' + altPosition )
+	templates.append( lName + 'for' + altPosition )
+	templates.append( lName + 'for' + position )
+	templates.append( lName + '4' + position )
 
 
 # This generates the text mangling
