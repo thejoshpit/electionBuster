@@ -193,7 +193,7 @@ parser.add_argument('-y','--year', help='Year of the election',required=True)
 parser.add_argument('-e','--electionType',help='Type of election (congress, senate, president)', required=True)
 parser.add_argument('-s','--state', help='Candidate\'s state of origin', action='append' )
 #Exists for candidates like Mitt Romney that possibly have an attachment to two states (i.e., Utah, Massachusetts) 
-parser.add_argument('-file','--fileName', help='Filename containing a list of candidates')
+parser.add_argument('-a','--aliasFileName', help='Filename containing a list of aliases')
 args = parser.parse_args()
 
 # Stores command line argumetns
@@ -208,8 +208,13 @@ electionType = args.electionType
 electionType = electionType.lower()
 state = []
 stateText = ""
+
+fileName = "states.csv"
+if (args.aliasFileName) :
+        fileName = stringAndStrip( args.aliasFileName)
+
 if (args.state) :
-	nd = NameDenormalizer( "states.csv" )
+	nd = NameDenormalizer( fileName )
 	for aState in args.state:
 		stateText = stateText + aState.upper()
 		state.append( stringAndStrip( aState.upper( ) ) )
@@ -217,10 +222,6 @@ if (args.state) :
 		for s1 in statenick:
 			for s in s1:
 				state.append( s )
-if (args.fileName) :
-        fileName = args.fileName
-        fileName = stringAndStrip(fileName)
-
 if (args.middleName) :
 	mName = args.middleName
 	mName = mName.lower()
