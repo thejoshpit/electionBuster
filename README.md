@@ -22,32 +22,35 @@ Example types of candidate URLs it looks for are:
 
 The tool prints output to the screen, but also writes to a logfile. The resulting logfiles are often ~3-5 MB. 
 
-
 2018 Changes to Election Buster 
 
 We are moving to multiple versions 
-- Election Buster Prime: For scanning candidates 
-- COMscan: For scanning Super PACs and the DNC and RNC
-- GateBuster: For scanning online voter registration systems and online ballot marking sites fun by state and local agencies  
+- Election Buster: For scanning candidates 
+- Election Aperture: For scanning Super PACs, campaign organizations (e.g., DNC), and state election portals (online voter registration systems and online ballot marking sites fun by state and local agencies)
 
-At DEFCON last year, folks were finding sensitive election documentation online. Anyway to use a Google API to look for this stuff? 
-
-Election Buster Prime 
+2018 Election Buster TODOs: 
 - New Domains: .ru, .cn, .link, .io, .pk, .pl, .top (COMPLETE) 
-- Update WhoIs capture and storage (COMPLETE - No longer using WhoAreThey.py)
-- Figure out when domains were first registered 
 - IP address capture (COMPLETE)   
+- HTML capture (COMPLETE) 
+- Update WhoIs capture and storage (COMPLETE - the tool WhoAreThey.py is deprecated)
+- Include optional support for middle names (COMPLETE) 
+- Figure out when domains were first registered 
 - Compare IP addresses of hosted domains
 - Possibly embed IP address and whois info into the picture 
-- HTML capture (COMPLETE) 
-	
-Problems:
-- Middle names and middle inititals cause problems. The program cant only take in first names and last names as valid inputs. I typically googled the individual with a middle name/initial to see if it is actually used in their marketing material. If it is, I tend to concatenate it with the last name. 
-- Special characters (non-english characters) cause the program problems. I tend to google the candidate and see how they dealing with this situation (e.g., changing an é to an e) and copy that. 
-- Sometimes the code exits right before the results are written, after the scan has occured. 
-
-Smallerscall To do list:
-- Add in support for small elections such as councilmember, ward, and sheriff, or just a * field
-- Include optional support for middle names
-- Change runtime to seconds. 
+- Parse goodResults.txt's pages and look for GoDaddy, Bluehost pages 
 - Log 300 and 400 series response codes as hits and log them
+- Add in support for small elections such as councilmember, ward, and sheriff, or just a * field
+- Change runtime to seconds. 
+
+Known problems:
+- Special characters (non-english characters) cause the program problems. I tend to google the candidate and see how they dealing with this situation (e.g., changing an é to an e) and copy that. 
+- The number of hits the tool finds for a candidate is having a confusing scoping issue and doesn't function properly 
+
+Exploring new areas
+
+Explore the use of machine learning for site identification: 
+- PhishZoo: Detecting Phishing Websites by Looking at Them
+http://ieeexplore.ieee.org/document/6061361/
+
+-At DEFCON last year, folks were finding sensitive election documentation online. Anyway to use a Google API to look for this stuff? 
+	
