@@ -1,15 +1,16 @@
 #!/usr/bin/python3.5
  
 ##################################################
-## Author: Joshua Franklin
+## Author: Joshua Franklin, Kevin Franklin 
 ## Example input to start: 
 ## sudo ./electionBuster.py -f josh -l franklin -y 2014 -e senate -s pennsyltucky 
 ## 6 arguments are passed:
-## 1: The first name of the candidate
-## 2: The last name of the candidate
-## 3: The year of the election
-## 4: The type of race (e.g., congress, senate, president)
-## 5: The state or region the candidate is from
+## 1: The first name of the candidate (mandatory) 
+## 2: The middle name of the candidate (optional)
+## 2: The last name of the candidate (mandatory)
+## 3: The year of the election (mandatory)
+## 4: The type of race, such as congress, senate, or president. (mandatory)
+## 5: The state or region the candidate is from (optional)
 ##################################################
 
 import requests 
@@ -204,6 +205,7 @@ fName = fName.lower()
 lName = args.lastName
 lName = lName.lower()
 year = args.year
+shortYear = year[-2:]
 electionType = args.electionType
 electionType = electionType.lower()
 state = []
@@ -225,6 +227,7 @@ if (args.state) :
 if (args.middleName) :
 	mName = args.middleName
 	mName = mName.lower()
+	middleInitial = mName[0]
 
 # This assigns the position variable
 if (electionType == 'congress') or (electionType == 'congressional') : 
@@ -258,6 +261,7 @@ electionType = stringAndStrip(electionType)
 
 # Alerting the users to the types of sites we're expecting to find 
 # This differs at times since the state variable isn't mandatory to run the script 
+## Consider deleting this - does it actually provide value? 
 if (args.state) : 
 	print('We expect to find these URLs excluding subtle variances:')
 	print('http://www.' + fName + lName + '.com')
@@ -330,8 +334,8 @@ alt_alphabets = [ 	'abcdefghijklmnopqrstuvwxyz1234567890',
 			'abcd3fghijklmnopqrstuvwxyz1234567890',
 			'abcdefghijklmnopqrstuvwxyz12e4567890']
 
-# These are the template names - refer to Loop 1 for examples
-
+# These are the template that we'll use based on the optional input parameters. 
+# The first one is if the state was input. 
 if (args.state) : 
 	templates = []
 	templates.append( fName + lName )
@@ -339,11 +343,20 @@ if (args.state) :
 	templates.append( lName + fName )
 	templates.append( lName + '-' + fName )
 	templates.append( fName + year )
+	templates.append( fName + shortYear )
 	templates.append( lName + year )
+	templates.append( lName + shortYear )	
 	templates.append( fName + lName + year )
+	templates.append( fName + lName + shortYear )	
 	templates.append( fName + '-' + lName + year )
+	templates.append( fName + '-' + lName + shortYear )	
 	for stateAlias in state:
 		templates.append( fName + lName + 'for' + stateAlias )
+		templates.append( fName + lName + 'for' + stateAlias + year)
+		templates.append( fName + lName + 'for' + stateAlias + shortYear)	
+		templates.append( lName + 'for' + stateAlias )
+		templates.append( lName + 'for' + stateAlias + year)
+		templates.append( lName + 'for' + stateAlias + shortYear)
 		templates.append( fName + '-' + lName + 'for' + stateAlias )
 		templates.append( fName + lName + '4' + stateAlias )
 		templates.append( fName + '-' + lName + '4' + stateAlias )
@@ -353,6 +366,46 @@ if (args.state) :
 	templates.append( fName + '-' + lName + 'for' + position )
 	templates.append( fName + lName + '4' + position )
 	templates.append( fName + '-' + lName + '4' + position )
+	templates.append( fName + 'for' + position )
+	templates.append( fName + '4' + position )
+	templates.append( fName + 'for' + position + year )
+	templates.append( fName + 'for' + position + shortYear )
+	templates.append( fName + '4' + position + year )
+	templates.append( fName + '4' + position + shortYear )	
+	templates.append( position + fName + lName )
+	templates.append( position + '-' + fName + lName )
+	templates.append( position + fName + '-' + lName )
+	templates.append( position + '-' + fName + '-' + lName )
+	templates.append( fName + lName + 'for' + altPosition )
+	templates.append( fName + lName + '4' + altPosition )
+	templates.append( fName + 'for' + altPosition )
+	templates.append( fName + '4' + altPosition )
+	templates.append( lName + 'for' + altPosition )
+	templates.append( lName + 'for' + position )
+	templates.append( lName + '4' + position )
+# This one is for middle name only 
+elif (args.middleName):  
+	templates = []
+	templates.append( fName + lName )
+	templates.append( fName + mName + lName )
+	templates.append( fName + middleInitial + lName )
+	templates.append( fName + '-' + lName )
+	templates.append( lName + fName )
+	templates.append( lName + '-' + fName )
+	templates.append( fName + year )
+	templates.append( lName + year )
+	templates.append( fName + lName + year )
+	templates.append( fName + '-' + lName + year )
+	templates.append( fName + lName + 'for' + position )
+	templates.append( fName + '-' + lName + 'for' + position )
+	templates.append( fName + lName + '4' + position )
+	templates.append( fName + '-' + lName + '4' + position )
+	templates.append( fName + mName + 'for' + position )
+	templates.append( fName + mName + year)
+	templates.append( fName + middleInitial + year )
+	templates.append( fName + mName + 'for' + position + year)
+	templates.append( fName + middleInitial + 'for' + position + year )
+	templates.append( fName + middleInitial + 'for' + position )
 	templates.append( fName + 'for' + position )
 	templates.append( fName + '4' + position )
 	templates.append( fName + 'for' + position + year )
@@ -368,6 +421,67 @@ if (args.state) :
 	templates.append( lName + 'for' + altPosition )
 	templates.append( lName + 'for' + position )
 	templates.append( lName + '4' + position )
+#This one is middle name and state 
+elif (args.middleName and args.state):  
+	templates = []
+	templates.append( fName + lName )
+	templates.append( fName + mName + lName )
+	templates.append( fName + middleInitial + lName )
+	templates.append( fName + '-' + lName )
+	templates.append( lName + fName )
+	templates.append( lName + '-' + fName )
+	templates.append( fName + year )
+	templates.append( fName + shortYear )
+	templates.append( lName + year )
+	templates.append( lName + shortYear )
+	templates.append( fName + lName + year )
+	templates.append( fName + lName + shortYear )	
+	templates.append( fName + '-' + lName + year )
+	templates.append( fName + '-' + lName + shortYear )	
+	for stateAlias in state:
+		templates.append( fName + lName + 'for' + stateAlias )
+		templates.append( fName + lName + 'for' + stateAlias + year)
+		templates.append( fName + lName + 'for' + stateAlias + shortYear)	
+		templates.append( lName + 'for' + stateAlias )
+		templates.append( lName + 'for' + stateAlias + year)
+		templates.append( lName + 'for' + stateAlias + shortYear)
+		templates.append( fName + '-' + lName + 'for' + stateAlias )
+		templates.append( fName + lName + '4' + stateAlias )
+		templates.append( fName + '-' + lName + '4' + stateAlias )
+		templates.append( fName + lName + stateAlias )
+		templates.append( fName + '-' + lName + stateAlias )
+	templates.append( fName + lName + 'for' + position )
+	templates.append( fName + '-' + lName + 'for' + position )
+	templates.append( fName + lName + '4' + position )
+	templates.append( fName + '-' + lName + '4' + position )
+	templates.append( fName + mName + 'for' + position )
+	templates.append( fName + mName + year)
+	templates.append( fName + mName + shortYear)	
+	templates.append( fName + middleInitial + year )
+	templates.append( fName + middleInitial + shortYear )	
+	templates.append( fName + mName + 'for' + position + year)
+	templates.append( fName + mName + 'for' + position + shortYear)	
+	templates.append( fName + middleInitial + 'for' + position + year )
+	templates.append( fName + middleInitial + 'for' + position + shortYear )	
+	templates.append( fName + middleInitial + 'for' + position )
+	templates.append( fName + 'for' + position )
+	templates.append( fName + '4' + position )
+	templates.append( fName + 'for' + position + year )
+	templates.append( fName + 'for' + position + shortYear )	
+	templates.append( fName + '4' + position + year )
+	templates.append( fName + '4' + position + shortYear )	
+	templates.append( position + fName + lName )
+	templates.append( position + '-' + fName + lName )
+	templates.append( position + fName + '-' + lName )
+	templates.append( position + '-' + fName + '-' + lName )
+	templates.append( fName + lName + 'for' + altPosition )
+	templates.append( fName + lName + '4' + altPosition )
+	templates.append( fName + 'for' + altPosition )
+	templates.append( fName + '4' + altPosition )
+	templates.append( lName + 'for' + altPosition )
+	templates.append( lName + 'for' + position )
+	templates.append( lName + '4' + position )
+#this one is the least number of parameters, just the basics 
 else :  
 	templates = []
 	templates.append( fName + lName )
@@ -375,9 +489,13 @@ else :
 	templates.append( lName + fName )
 	templates.append( lName + '-' + fName )
 	templates.append( fName + year )
+	templates.append( fName + shortYear )
 	templates.append( lName + year )
+	templates.append( lName + shortYear )
 	templates.append( fName + lName + year )
+	templates.append( fName + lName + shortYear )
 	templates.append( fName + '-' + lName + year )
+	templates.append( fName + '-' + lName + shortYear )	
 	templates.append( fName + lName + 'for' + position )
 	templates.append( fName + '-' + lName + 'for' + position )
 	templates.append( fName + lName + '4' + position )
@@ -385,7 +503,13 @@ else :
 	templates.append( fName + 'for' + position )
 	templates.append( fName + '4' + position )
 	templates.append( fName + 'for' + position + year )
+	templates.append( fName + 'for' + position + shortYear )
 	templates.append( fName + '4' + position + year )
+	templates.append( fName + '4' + position + shortYear )	
+	templates.append( fName + 'for' + position + year )
+	templates.append( lName + 'for' + position + shortYear )
+	templates.append( lName + '4' + position + year )
+	templates.append( lName + '4' + position + shortYear )
 	templates.append( position + fName + lName )
 	templates.append( position + '-' + fName + lName )
 	templates.append( position + fName + '-' + lName )
@@ -581,7 +705,7 @@ for r in reverseResults3 :
 	tryURL( 'http://www.' + r )
 
 ### CORNER CASES ###
-# The following looks for odd domains that I've noticed 
+# The following looks for odd domains that we've noticed since 2012 
 tryURL( 'http://www.team' + fName ) # Example:  'teamfranklin'
 tryURL( 'http://www.team' + lName )
 tryURL( 'http://www.team' + fName + lName )
@@ -626,11 +750,13 @@ allURLS = removeDups( allURLS )
 print( 'Unique URLS: ' + str(len(allURLS)) + "\n" )
 
 pool = ThreadPool(64)
+
 # Open the urls in their own threads
 # and return the results
 results = pool.map( tryURLforReal, allURLS )
 pool.close()
 pool.join()
+
 # Each tread added an entry for each result (found or not, gotta filter the blanks)
 # I'm doing this here sinced the file writes might not have been synchronized
 # its just a fear I had
@@ -638,7 +764,7 @@ for i in results:
     if ( len(i) > 10 ) :  
         resultsFile.write( i )
 
-# Wow! You've made it to the end. Well done! 
+
 
 totalRuntime = time.time() - start_time, "seconds"
 
@@ -660,18 +786,21 @@ resultsFile.write( "-------------------------------------" + "\n" )
 resultsFile.write( "EOF " + "\n" )
 for url in allURLS:
 	resultsFile.write( str(url) + "\n" )
+	
 ###### Print final results to screen ###########			
 print( "###################################### " + "\n" )
 print( "ElectionBuster Scan Results: " + "\n" )
 print( "###################################### " + "\n" )
 print( "INPUTS" + "\n" )
 print( "First name: " + fName + "\n" )
+print( "Middle name: " + mName + "\n" )
 print( "Last name: " + lName + "\n" )
 print( "Year: " + year + "\n" )
 print( "Election type: " + electionType + "\n" )
 print( "-------------------------------------" + "\n" )
 print( "Total runtime was " + str(totalRuntime) + "\n" )
 print( "-------------------------------------" + "\n" )
+## TODO: Currently not displayed due to bug 
 print( "Positive results: " + "\n" )
 print( "There were " + str(len(confirmedURLs)) + " hits:" + "\n" )
 print( "-------------------------------------" + "\n" )
@@ -679,7 +808,7 @@ print( "\n" )
 #for url in confirmedURLs:
 #	print( url )
 #print( "\n" )
-#TODO: Parse goodResults.txt's pages and look for GoDaddy, Bluehost pages 
+
 
 # Bad things happen if these files are not properly closed
 resultsFile.close()
