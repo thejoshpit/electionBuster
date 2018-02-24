@@ -22,18 +22,27 @@ Example types of candidate URLs it looks for are:
 
 The tool prints output to the screen, but also writes to a logfile. The resulting logfiles are often ~3-5 MB. 
 
-2018 Changes to Election Buster 
+2018 ToDo List  
 
 We are moving to multiple versions 
 - Election Buster: For scanning candidates 
 - Election Aperture: For scanning Super PACs, campaign organizations (e.g., DNC), and state election portals (online voter registration systems and online ballot marking sites fun by state and local agencies)
+- Post Processing script to highlight which sites need human review
+- - remove parked domains 
+- - Include number of URLs that were searched 
+- - Compare IP addresses of hosted domains  
+
+2016 Results Review 
+- graph of pages per candidate each month 
+- stuff like that 
+- Need graph daigrams showing connections between domains 
 
 2018 Election Buster TODOs: 
-- New Domains: .ru, .cn, .link, .io, .pk, .pl, .top (COMPLETE) 
-- IP address capture (COMPLETE)   
-- HTML capture (COMPLETE) 
-- Update WhoIs capture and storage (COMPLETE - the tool WhoAreThey.py is deprecated)
-- Include optional support for middle names (COMPLETE) 
+- New Domains: .ru, .cn, .link, .io, .pk, .pl, .top (COMPLETE: Kevin) 
+- IP address capture (COMPLETE: Kevin)   
+- HTML capture (COMPLETE: Kevin ) 
+- Update WhoIs capture and storage (COMPLETE: Kevin - the tool WhoAreThey.py is deprecated)
+- Include optional support for middle names (COMPLETE: Josh ) 
 - Figure out when domains were first registered 
 - Compare IP addresses of hosted domains
 - Possibly embed IP address and whois info into the picture 
@@ -41,6 +50,9 @@ We are moving to multiple versions
 - Log 300 and 400 series response codes as hits and log them
 - Add in support for small elections such as councilmember, ward, and sheriff, or just a * field
 - Change runtime to seconds. 
+- Include party name as an optional input to note in the filename whether someone's a D or an R
+- Store 2018 logfiles on github 
+- similar to page exists URL, have page not exists URL 
 
 Known problems:
 - Special characters (non-english characters) cause the program problems. I tend to google the candidate and see how they dealing with this situation (e.g., changing an é to an e) and copy that. 
