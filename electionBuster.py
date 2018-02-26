@@ -195,6 +195,7 @@ parser.add_argument('-e','--electionType',help='Type of election (congress, sena
 parser.add_argument('-s','--state', help='Candidate\'s state of origin', action='append' )
 #Exists for candidates like Mitt Romney that possibly have an attachment to two states (i.e., Utah, Massachusetts) 
 parser.add_argument('-a','--aliasFileName', help='Filename containing a list of aliases')
+parser.add_argument('-p','--party', help='Party Affiliation')
 args = parser.parse_args()
 
 # Stores command line argumetns
@@ -204,6 +205,8 @@ fName = fName.lower()
 
 lName = args.lastName
 lName = lName.lower()
+party = ""
+
 year = args.year
 shortYear = year[-2:]
 electionType = args.electionType
@@ -211,6 +214,8 @@ electionType = electionType.lower()
 state = []
 stateText = ""
 
+if (args.party) :
+	party = args.party
 fileName = "states.csv"
 if (args.aliasFileName) :
         fileName = stringAndStrip( args.aliasFileName)
@@ -218,7 +223,7 @@ if (args.aliasFileName) :
 if (args.state) :
 	nd = NameDenormalizer( fileName )
 	for aState in args.state:
-		stateText = stateText + aState.upper()
+		stateText = stateText + aState.lower()
 		state.append( stringAndStrip( aState.upper( ) ) )
 		statenick = list( nd.get( aState.upper() ) )
 		for s1 in statenick:
@@ -290,7 +295,11 @@ else :
 # This is the result output files
 # Makes a unique filename based on data and time
 now = date.today()
-tempResults = 'results-' + fName + '-' + lName + '-' + stateText + '-' + str(now) + '.txt'
+partyString = ""
+if ( args.party ) :
+	partyString = "-" + party.lower()
+	
+tempResults = 'results-' + fName + '-' + lName + '-' + stateText + partyString + '-' + str(now) + '.txt'
 
 resultsFile = open(tempResults, "w")
 
