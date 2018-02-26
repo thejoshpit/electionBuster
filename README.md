@@ -47,10 +47,10 @@ We are moving to multiple versions
 - Compare IP addresses of hosted domains
 - Possibly embed IP address and whois info into the picture 
 - Parse goodResults.txt's pages and look for GoDaddy, Bluehost pages 
-- Log 300 and 400 series response codes as hits and log them (these are in the raw output of electionbuster)
+- Log 300 and 400 series response codes as hits and log them (these are in the raw output of electionbuster)  (COMPLETE: Kevin added to result of getips.sh)
 - Add in support for small elections such as councilmember, ward, and sheriff, or just a * field
 - Change runtime to seconds. 
-- Include party name as an optional input to note in the filename whether someone's a D or an R
+- Include party name as an optional input to note in the filename whether someone's a D or an R (COMPLETE: Kevin)
 - Store 2018 logfiles on github 
 - similar to page exists URL, have page not exists URL 
 
