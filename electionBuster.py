@@ -229,6 +229,9 @@ if (args.state) :
 		for s1 in statenick:
 			for s in s1:
 				state.append( s )
+mName = ""
+middleInitial = ""
+
 if (args.middleName) :
 	mName = args.middleName
 	mName = mName.lower()
