@@ -51,7 +51,7 @@ We are moving to multiple versions
 - Add in support for small elections such as councilmember, ward, and sheriff, or just a * field
 - Change runtime to seconds. 
 - Include party name as an optional input to note in the filename whether someone's a D or an R (COMPLETE: Kevin)
-- Store 2018 logfiles on github 
+- Store 2018 logfiles on github (COMPLETE: Kevin)
 - similar to page exists URL, have page not exists URL 
 
 Known problems:
