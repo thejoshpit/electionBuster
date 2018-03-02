@@ -40,9 +40,7 @@ pdf( opt$output, useDingbats=FALSE, width=11, height=7 ) ;
 
 plot.igraph(g5s, vertex.shape="none",  vertex.label.cex = .3, edge.arrow.size=.1, layout=layout.fruchterman.reingold) ;
 title(main=opt$title, cex.main=1)
-mtext( paste('Scan: ', 
-	paste( toupper(substring(opt$date,1,1)), substring( opt$date,2), sep="", collapse=" " )) , 
-	side = 1, cex=1 ) ;
+mtext( paste('Scan: ', opt$date), side = 1, cex=1 ) ;
 mtext( "ElectionBusters", side=4 ) ;
 
 quit() ;
