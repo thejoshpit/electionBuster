@@ -1,12 +1,21 @@
 #!/bin/bash
 
+#   ____      _     ___ ____      
+#  / ___| ___| |_  |_ _|  _ \ ___ 
+# | |  _ / _ \ __|  | || |_) / __|
+# | |_| |  __/ |_   | ||  __/\__ \
+#  \____|\___|\__| |___|_|   |___/
+#                                
+
+# Convert the eb file into a list of IPs by calling dig
+#
 
 resultfile=$1
 procid=$$
 tmpfile=/tmp/$procid.txt
 
+# The single most useful command to deal with EB files
 grep -A 1 "Page Exist" $resultfile  | paste - - - | awk '{ print $3, $4, $5}' | sed 's/,$//' > $tmpfile
-echo $tmpfile
 while read j
 do
 	arg1=`echo $j | awk '{ print $1}'`
@@ -21,5 +30,4 @@ do
 done <$tmpfile
 
 rm $tmpfile
-
 
