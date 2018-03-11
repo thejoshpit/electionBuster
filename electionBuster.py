@@ -279,6 +279,8 @@ if (args.state) :
 	print('http://www.' + fName + lName + year + '.com' )
 	for stateAlias in state:
 		print('http://www.' + fName + lName + 'for' + stateAlias + '.com')
+		print('http://www.' + lName + 'for' + stateAlias + '.com')
+		print('http://www.' + fName + 'for' + stateAlias + '.com')
 	print('http://www.' + fName + lName + 'for' + position + '.com')
 	print('http://www.' + fName + 'for' + position + '.com')
 	print('http://www.' + fName + 'for' + position + year + '.com')
@@ -369,6 +371,9 @@ if (args.state) :
 		templates.append( lName + 'for' + stateAlias )
 		templates.append( lName + 'for' + stateAlias + year)
 		templates.append( lName + 'for' + stateAlias + shortYear)
+		templates.append( fName + 'for' + stateAlias )
+		templates.append( fName + 'for' + stateAlias + year)
+		templates.append( fName + 'for' + stateAlias + shortYear)
 		templates.append( fName + '-' + lName + 'for' + stateAlias )
 		templates.append( fName + lName + '4' + stateAlias )
 		templates.append( fName + '-' + lName + '4' + stateAlias )
