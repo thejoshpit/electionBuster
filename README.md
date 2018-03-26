@@ -65,4 +65,11 @@ Explore the use of machine learning for site identification:
 http://ieeexplore.ieee.org/document/6061361/
 
 -At DEFCON last year, folks were finding sensitive election documentation online. Anyway to use a Google API to look for this stuff? 
+
+
+Found a few more patterns
+ELECTfirstlast.com      https://www.electmarciamorgan.com/
+lastname4SENATE         http://www.stokes4senate.com/
+firstmiddleyear.com     http://paulajean2018.com
+MIDDLELAST.com          http://rikkivaughn.com/
 	
