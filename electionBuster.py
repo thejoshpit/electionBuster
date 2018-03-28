@@ -347,6 +347,20 @@ alt_alphabets = [ 	'abcdefghijklmnopqrstuvwxyz1234567890',
 			'abcdefghijklmmopqrstuvwxyz1234567890',
 			'abcdefghijklnnopqrstuvwxyz1234567890',
 			'abcd3fghijklmnopqrstuvwxyz1234567890',
+			'Аbcdefghijklmnopqrstuvwxyz1234567890', # homographic Cyrillic А
+			'аbcdefghijklmnopqrstuvwxyz1234567890', # homographic Cyrillic а
+			'Ӓbcdefghijklmnopqrstuvwxyz1234567890', # homographic Cyrillic Ӓ 
+			'ӓbcdefghijklmnopqrstuvwxyz1234567890', # homographic Cyrillic ӓ 
+			'Αbcdefghijklmnopqrstuvwxyz1234567890', # homographic Greek Α
+			'abcdefghijklmnОpqrstuvwxyz1234567890', # homographic Cyrillic О
+			'abcdefghijklmnоpqrstuvwxyz1234567890', # homographic Cyrillic о   
+			'abcdefghijklmnоpqrstuvwxyz1234567890', # homographic Greek о  
+			'abcdefghijklmnopqrsΤuvwxyz1234567890'	# homographic Greek Τ  
+			'abcdefghijklmnopqrsТuvwxyz1234567890'	# homographic Cyrillic Т	
+			'abcdefghijklΜnopqrstuvwxyz1234567890'	# homographic Greek Μ	
+			'abcdefghijklМnopqrstuvwxyz1234567890'	# homographic Cyrillic М	
+			'abcdefghijklmnoРqrstuvwxyz1234567890',	# homographic Cyrillic Р
+			'abcdefghijklmnoРqrstuvwxyz1234567890',	# homographic Cyrillic Р		
 			'abcdefghijklmnopqrstuvwxyz12e4567890']
 
 # These are the template that we'll use based on the optional input parameters. 
@@ -619,7 +633,7 @@ tryURL( 'http://www.elect' + fName + middleInitial + lName )
 tryURL( 'http://www.elect' + fName )
 tryURL( 'http://www.elect' + lName )
 tryURL( 'http://www.' + fName + middleInitial + year )
-tryURL( 'http://www. + middleInitial + lName )
+tryURL( 'http://www.' + middleInitial + lName )
 
 
 print( ' Total URLS: ' + str(len(allURLS)) + "\n" )
