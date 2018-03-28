@@ -585,156 +585,7 @@ for r in results:
 ### LOOP 2 ###
 # Puts donate at the beginning & 
 # Removes the period after 'www'
-########################
-#http://www.donatejoshfranklin.com
-#http://wwwjoshfranklin.com
-
-print("Entering template loop 2^^^^^^^^^^^^^^^^^^^^^^^^^^")
-#print "There were " + str(len(skippedURLs)) + " skipped so far."
-print(time.time() - start_time, "seconds")
-for r in results:
-	#Donate at the beginning
-	tryURL( 'http://www.donate' + r )
-
-	#No period
-	tryURL( 'http://www' + r )
-
-### LOOP 3 ###
-# Puts donate at the end and removes the period after 'www'
-########################
-#http://www.joshfranklindonate.com
-#http://wwwjoshfranklindonate.com
-#print "There were " + str(len(skippedURLs)) + " skipped so far."
-print("Entering template loop 3^^^^^^^^^^^^^^^^^^^^^^^^^^" )
-print(time.time() - start_time, "seconds")
-for r in resultsDonate:
-	tryURL( 'http://www.' + r ) # Example: http://www.joshfranklindonate.com
-	#Donate at the end without periods after www
-	tryURL( 'http://www' + r ) # Example: http://wwwjoshfranklindonate.com
-
-# TODO: add an extra o to situations with two 'o's, like "book" to "boook"
-# TODO: try Rick for Richard etcetera 
-# TODO: Turn 2014 into 14 so we look for http://www.lName+fName+14.com
-
-### NEW TYPO FUNCTIONS###
-# All examples use josh franklin 2014 president DC 
-
-typoFirstLast = fName + lName
-typoLastYear= lName + year
-typoFirstLastYear = fName + lName + year
-
-vowelResults1 = wrongVowel(typoFirstLast)
-skipResults1 = skipLetter(typoFirstLast)
-doubleResults1 = doubleLetter(typoFirstLast)
-insertResults1 = insertLetter(typoFirstLast)
-subResults1 = substitution(typoFirstLast)
-reverseResults1 = reverseLetter(typoFirstLast)
-
-vowelResults2 = wrongVowel(typoLastYear)
-skipResults2 = skipLetter(typoLastYear)
-doubleResults2 = doubleLetter(typoLastYear)
-insertResults2 = insertLetter(typoLastYear)
-subResults2 = substitution(typoLastYear)
-reverseResults2 = reverseLetter(typoLastYear)
-
-vowelResults3 = wrongVowel(typoFirstLastYear)
-skipResults3 = skipLetter(typoFirstLastYear)
-doubleResults3 = doubleLetter(typoFirstLastYear)
-insertResults3 = insertLetter(typoFirstLastYear)
-subResults3 = substitution(typoFirstLastYear)
-reverseResults3 = reverseLetter(typoFirstLastYear)
-
-### Typo loop 1 ###
-#print "There were " + str(len(skippedURLs)) + " skipped so far."
-print( "Entering vowel loop")
-for r in vowelResults1 : 
-	tryURL( 'http://www.' + r )
-
-print("Entering skip loop")
-for r in skipResults1 : 
-	tryURL( 'http://www.' + r )
-
-print( "Entering double loop")
-for r in doubleResults1 : 
-	tryURL( 'http://www.' + r )
-
-print("Entering insert loop")
-for r in insertResults1 : 
-	tryURL( 'http://www.' + r )
-
-print( "Entering sub loop")
-for r in subResults1 : 
-	tryURL( 'http://www.' + r )
-
-print("Entering reverse loop")
-for r in reverseResults1 : 
-	tryURL( 'http://www.' + r )
-					
-### Typo loop 2 ###
-#print "There were " + str(len(skippedURLs)) + " skipped so far."
-print( "Entering vowel loop")
-for r in vowelResults2 : 
-	tryURL( 'http://www.' + r )
-
-print( "Entering skip loop")
-for r in skipResults2 : 
-	tryURL( 'http://www.' + r )
-
-print("Entering double loop")
-for r in doubleResults2 : 
-	tryURL( 'http://www.' + r )
-
-print("Entering insert loop")
-for r in insertResults2 : 
-	tryURL( 'http://www.' + r )
-
-print( "Entering sub loop")
-for r in subResults2 : 
-	tryURL( 'http://www.' + r )
-
-print("Entering reverse loop")
-for r in reverseResults2 : 
-	tryURL( 'http://www.' + r )
-
-### Typo loop 3 ###
-#print "There were " + str(len(skippedURLs)) + " skipped so far."
-print( "Entering vowel loop")
-for r in vowelResults3 : 
-	tryURL( 'http://www.' + r )
-
-print( "Entering skip loop")
-for r in skipResults3 : 
-	tryURL( 'http://www.' + r )
-
-print( "Entering double loop")
-for r in doubleResults3 : 
-	tryURL( 'http://www.' + r )
-
-print( "Entering insert loop")
-for r in insertResults3 : 
-	tryURL( 'http://www.' + r )
-
-print( "Entering sub loop")
-for r in subResults3 : 
-	tryURL( 'http://www.' + r )
-
-print( "Entering reverse loop")
-for r in reverseResults3 : 
-	tryURL( 'http://www.' + r )
-
-### CORNER CASES ###
-# The following looks for odd domains that we've noticed since 2012 
-tryURL( 'http://www.team' + fName ) # Example:  'teamfranklin'
-tryURL( 'http://www.team' + lName )
-tryURL( 'http://www.team' + fName + lName )
-
-# Example:  'repfranklin' 
-# It's easier just to include for everyone, even if they are not in a congressional race
-tryURL( 'http://www.rep' + fName )
-tryURL( 'http://www.rep' + lName )
-tryURL( 'http://www.rep' + fName + lName )
-
-#expand the tlds a little
+##############tlds a little
 tlds.append( '.republican' )
 tlds.append( '.democrat' )
 tlds.append( '.red' )
@@ -747,6 +598,7 @@ tryURL( 'http://www.democrat' + fName + lName )
 tryURL( 'http://www.libertarian' + fName + lName )
 tryURL( 'http://www.independent' + fName + lName )
 tryURL( 'http://www.vote' + fName + lName )   #Example:  votejoshfranklin.com
+tryURL( 'http://www.vote' + fName + middleInitial + lName )   #Example:  votejoshmichaelfranklin.com
 tryURL( 'http://www.vote' + fName )           #Example:  votejosh.com
 tryURL( 'http://www.vote' + lName )           #Example:  votefranklin.com
 tryURL( 'http://www.' + lName + position )    #Example:  franklinpresident.com
@@ -762,6 +614,13 @@ tryURL( 'http://www.' + lName + 'sucks' ) #Example:  franklinsucks.com
 tryURL( 'http://www.' + fName )     #Example:  josh.vote
 tryURL( 'http://www.' + lName )     #Example:  franklin.vote
 tryURL( 'http://www.' + fName + lName ) #Example:  joshfranklin.vote
+tryURL( 'http://www.elect' + fName + lName )
+tryURL( 'http://www.elect' + fName + middleInitial + lName )
+tryURL( 'http://www.elect' + fName )
+tryURL( 'http://www.elect' + lName )
+tryURL( 'http://www.' + fName + middleInitial + year )
+tryURL( 'http://www. + middleInitial + lName )
+
 
 print( ' Total URLS: ' + str(len(allURLS)) + "\n" )
 allURLS = removeDups( allURLS ) 
@@ -775,7 +634,7 @@ results = pool.map( tryURLforReal, allURLS )
 pool.close()
 pool.join()
 
-# Each tread added an entry for each result (found or not, gotta filter the blanks)
+# Each thread added an entry for each result (found or not, gotta filter the blanks)
 # I'm doing this here sinced the file writes might not have been synchronized
 # its just a fear I had
 for i in results:
