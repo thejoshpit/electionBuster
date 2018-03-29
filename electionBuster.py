@@ -355,10 +355,10 @@ alt_alphabets = [ 	'abcdefghijklmnopqrstuvwxyz1234567890',
 			'abcdefghijklmnОpqrstuvwxyz1234567890', # homographic Cyrillic О
 			'abcdefghijklmnоpqrstuvwxyz1234567890', # homographic Cyrillic о   
 			'abcdefghijklmnоpqrstuvwxyz1234567890', # homographic Greek о  
-			'abcdefghijklmnopqrsΤuvwxyz1234567890'	# homographic Greek Τ  
-			'abcdefghijklmnopqrsТuvwxyz1234567890'	# homographic Cyrillic Т	
-			'abcdefghijklΜnopqrstuvwxyz1234567890'	# homographic Greek Μ	
-			'abcdefghijklМnopqrstuvwxyz1234567890'	# homographic Cyrillic М	
+			'abcdefghijklmnopqrsΤuvwxyz1234567890',	# homographic Greek Τ  
+			'abcdefghijklmnopqrsТuvwxyz1234567890',	# homographic Cyrillic Т	
+			'abcdefghijklΜnopqrstuvwxyz1234567890',	# homographic Greek Μ	
+			'abcdefghijklМnopqrstuvwxyz1234567890',	# homographic Cyrillic М	
 			'abcdefghijklmnoРqrstuvwxyz1234567890',	# homographic Cyrillic Р
 			'abcdefghijklmnoРqrstuvwxyz1234567890',	# homographic Cyrillic Р		
 			'abcdefghijklmnopqrstuvwxyz12e4567890']
