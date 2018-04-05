@@ -260,7 +260,7 @@ else :
 	
 # top-level domain-names
 # # consider removing .me, .info, and .biz if they aren't adding value 
-tlds = ['.com', '.net', '.me' , '.org', '.net', '.biz', '.info', '.us' ]
+tlds = ['.com', '.net', '.me' , '.org', '.net', '.biz', '.info', '.us', '.cm' ]
 
 # Runs stringAndStrip on everything except fileName b/c that's used elsewhere
 fName = stringAndStrip(fName)
@@ -648,14 +648,12 @@ results = pool.map( tryURLforReal, allURLS )
 pool.close()
 pool.join()
 
+#print(results)
 # Each thread added an entry for each result (found or not, gotta filter the blanks)
 # I'm doing this here sinced the file writes might not have been synchronized
 # its just a fear I had
 for i in results:
-    if ( len(i) > 10 ) :  
-        resultsFile.write( i )
-
-
+    resultsFile.write( i )
 
 totalRuntime = time.time() - start_time, "seconds"
 
