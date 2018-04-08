@@ -260,7 +260,7 @@ else :
 	
 # top-level domain-names
 # # consider removing .me, .info, and .biz if they aren't adding value 
-tlds = ['.com', '.net', '.me' , '.org', '.net', '.biz', '.info', '.us' ]
+tlds = ['.com', '.net', '.me' , '.org', '.net', '.biz', '.info', '.us', '.cm' ]
 
 # Runs stringAndStrip on everything except fileName b/c that's used elsewhere
 fName = stringAndStrip(fName)
@@ -347,6 +347,20 @@ alt_alphabets = [ 	'abcdefghijklmnopqrstuvwxyz1234567890',
 			'abcdefghijklmmopqrstuvwxyz1234567890',
 			'abcdefghijklnnopqrstuvwxyz1234567890',
 			'abcd3fghijklmnopqrstuvwxyz1234567890',
+			'Аbcdefghijklmnopqrstuvwxyz1234567890', # homographic Cyrillic А
+			'аbcdefghijklmnopqrstuvwxyz1234567890', # homographic Cyrillic а
+			'Ӓbcdefghijklmnopqrstuvwxyz1234567890', # homographic Cyrillic Ӓ 
+			'ӓbcdefghijklmnopqrstuvwxyz1234567890', # homographic Cyrillic ӓ 
+			'Αbcdefghijklmnopqrstuvwxyz1234567890', # homographic Greek Α
+			'abcdefghijklmnОpqrstuvwxyz1234567890', # homographic Cyrillic О
+			'abcdefghijklmnоpqrstuvwxyz1234567890', # homographic Cyrillic о   
+			'abcdefghijklmnоpqrstuvwxyz1234567890', # homographic Greek о  
+			'abcdefghijklmnopqrsΤuvwxyz1234567890',	# homographic Greek Τ  
+			'abcdefghijklmnopqrsТuvwxyz1234567890',	# homographic Cyrillic Т	
+			'abcdefghijklΜnopqrstuvwxyz1234567890',	# homographic Greek Μ	
+			'abcdefghijklМnopqrstuvwxyz1234567890',	# homographic Cyrillic М	
+			'abcdefghijklmnoРqrstuvwxyz1234567890',	# homographic Cyrillic Р
+			'abcdefghijklmnoРqrstuvwxyz1234567890',	# homographic Cyrillic Р		
 			'abcdefghijklmnopqrstuvwxyz12e4567890']
 
 # These are the template that we'll use based on the optional input parameters. 
@@ -768,6 +782,7 @@ tryURL( 'http://www.democrat' + fName + lName )
 tryURL( 'http://www.libertarian' + fName + lName )
 tryURL( 'http://www.independent' + fName + lName )
 tryURL( 'http://www.vote' + fName + lName )   #Example:  votejoshfranklin.com
+tryURL( 'http://www.vote' + fName + middleInitial + lName )   #Example:  votejoshmichaelfranklin.com
 tryURL( 'http://www.vote' + fName )           #Example:  votejosh.com
 tryURL( 'http://www.vote' + lName )           #Example:  votefranklin.com
 tryURL( 'http://www.' + lName + position )    #Example:  franklinpresident.com
@@ -783,6 +798,13 @@ tryURL( 'http://www.' + lName + 'sucks' ) #Example:  franklinsucks.com
 tryURL( 'http://www.' + fName )     #Example:  josh.vote
 tryURL( 'http://www.' + lName )     #Example:  franklin.vote
 tryURL( 'http://www.' + fName + lName ) #Example:  joshfranklin.vote
+tryURL( 'http://www.elect' + fName + lName )
+tryURL( 'http://www.elect' + fName + middleInitial + lName )
+tryURL( 'http://www.elect' + fName )
+tryURL( 'http://www.elect' + lName )
+tryURL( 'http://www.' + fName + middleInitial + year )
+tryURL( 'http://www.' + middleInitial + lName )
+
 
 print( ' Total URLS: ' + str(len(allURLS)) + "\n" )
 allURLS = removeDups( allURLS ) 
@@ -796,7 +818,8 @@ results = pool.map( tryURLforReal, allURLS )
 pool.close()
 pool.join()
 
-# Each tread added an entry for each result (found or not, gotta filter the blanks)
+#print(results)
+# Each thread added an entry for each result (found or not, gotta filter the blanks)
 # I'm doing this here sinced the file writes might not have been synchronized
 # its just a fear I had
 for i in results:
