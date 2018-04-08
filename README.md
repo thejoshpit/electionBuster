@@ -53,6 +53,14 @@ We are moving to multiple versions
 - Include party name as an optional input to note in the filename whether someone's a D or an R (COMPLETE: Kevin)
 - Store 2018 logfiles on github (COMPLETE: Kevin)
 - similar to page exists URL, have page not exists URL 
+- New Templates based on new URLs:
+- - MIDDLE+LAST.com
+- - lastname + 4 + office.com
+- - Election + (last, first, first last).com
+- - first+middle+year.com
+- - herecomes + (first/last).com
+- - firstname+for+US+senate.com 
+- - lastname + 4/for + liberty.com
 
 Known problems:
 - Special characters (non-english characters) cause the program problems. I tend to google the candidate and see how they dealing with this situation (e.g., changing an é to an e) and copy that. 
