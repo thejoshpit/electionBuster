@@ -353,6 +353,24 @@ alt_alphabets = [ 	'abcdefghijklmnopqrstuvwxyz1234567890',
 # The first one is if the state was input. 
 if (args.state) : 
 	templates = []
+	words = []
+	words.append( 'for' )
+	words.append( '4' )
+	offices = []
+	offices.append( position )
+	offices.append( altPosition )
+	offices.append( 'us' + position )
+	offices.append( 'us' + altPosition )
+
+	templates.append( mName + lName )
+	templates.append( fName + lName )
+	if ( args.middleName ):
+		templates.append( fName + mName + lName )
+		templates.append( fName + mName + lName + year )
+		templates.append( mName + lName + year )
+		templates.append( fName + mInitial + lName )
+		templates.append( fName + mInitial + lName + year )
+		templates.append( mInitial + lName + year )
 	templates.append( fName + lName )
 	templates.append( fName + '-' + lName )
 	templates.append( lName + fName )
@@ -366,41 +384,41 @@ if (args.state) :
 	templates.append( fName + '-' + lName + year )
 	templates.append( fName + '-' + lName + shortYear )	
 	for stateAlias in state:
-		templates.append( fName + lName + 'for' + stateAlias )
-		templates.append( fName + lName + 'for' + stateAlias + year)
-		templates.append( fName + lName + 'for' + stateAlias + shortYear)	
-		templates.append( lName + 'for' + stateAlias )
-		templates.append( lName + 'for' + stateAlias + year)
-		templates.append( lName + 'for' + stateAlias + shortYear)
-		templates.append( fName + 'for' + stateAlias )
-		templates.append( fName + 'for' + stateAlias + year)
-		templates.append( fName + 'for' + stateAlias + shortYear)
-		templates.append( fName + '-' + lName + 'for' + stateAlias )
-		templates.append( fName + lName + '4' + stateAlias )
-		templates.append( fName + '-' + lName + '4' + stateAlias )
+		for four in words :
+			templates.append( fName + lName + four + stateAlias )
+			templates.append( fName + lName + four + stateAlias + year)
+			templates.append( fName + lName + four + stateAlias + shortYear)	
+			templates.append( lName + four + stateAlias )
+			templates.append( lName + four + stateAlias + year)
+			templates.append( lName + four + stateAlias + shortYear)
+			templates.append( fName + four + stateAlias )
+			templates.append( fName + four + stateAlias + year)
+			templates.append( fName + four + stateAlias + shortYear)
+			templates.append( fName + '-' + lName + four + stateAlias )
 		templates.append( fName + lName + stateAlias )
 		templates.append( fName + '-' + lName + stateAlias )
-	templates.append( fName + lName + 'for' + position )
-	templates.append( fName + '-' + lName + 'for' + position )
-	templates.append( fName + lName + '4' + position )
-	templates.append( fName + '-' + lName + '4' + position )
-	templates.append( fName + 'for' + position )
-	templates.append( fName + '4' + position )
-	templates.append( fName + 'for' + position + year )
-	templates.append( fName + 'for' + position + shortYear )
-	templates.append( fName + '4' + position + year )
-	templates.append( fName + '4' + position + shortYear )	
-	templates.append( position + fName + lName )
-	templates.append( position + '-' + fName + lName )
-	templates.append( position + fName + '-' + lName )
-	templates.append( position + '-' + fName + '-' + lName )
-	templates.append( fName + lName + 'for' + altPosition )
-	templates.append( fName + lName + '4' + altPosition )
-	templates.append( fName + 'for' + altPosition )
-	templates.append( fName + '4' + altPosition )
-	templates.append( lName + 'for' + altPosition )
-	templates.append( lName + 'for' + position )
-	templates.append( lName + '4' + position )
+		templates.append( lName + fName + stateAlias )
+		templates.append( lName + '-' + fName + stateAlias )
+	for office in offices:
+		for four in words:
+			templates.append( fName + lName + four + office )
+			templates.append( lName + fName + four + office )
+			templates.append( lName + '-' + fName + four + office )
+			templates.append( fName + '-' + lName + four + office )
+			templates.append( fName + four + office )
+			templates.append( fName + four + office + year )
+			templates.append( fName + four + office + shortYear )
+			templates.append( lName + four + office )
+			templates.append( lName + four + office + year )
+			templates.append( lName + four + office + shortYear )
+		templates.append( office + fName + lName )
+		templates.append( office + lName + fName )
+		templates.append( office + '-' + fName + lName )
+		templates.append( office + '-' + lName + fName )
+		templates.append( office + fName + '-' + lName )
+		templates.append( office + lName + '-' + fName )
+		templates.append( office + '-' + fName + '-' + lName )
+		templates.append( office + '-' + lName + '-' + fName )
 # This one is for middle name only 
 elif (args.middleName):  
 	templates = []
@@ -593,6 +611,9 @@ print("Entering template loop 2^^^^^^^^^^^^^^^^^^^^^^^^^^")
 #print "There were " + str(len(skippedURLs)) + " skipped so far."
 print(time.time() - start_time, "seconds")
 for r in results:
+	#Elect at the beginning
+	tryURL( 'http://www.elect' + r )
+
 	#Donate at the beginning
 	tryURL( 'http://www.donate' + r )
 
