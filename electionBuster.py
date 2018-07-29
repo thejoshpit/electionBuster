@@ -663,7 +663,7 @@ totalRuntime = time.time() - start_time, "seconds"
 resultsFile.write( "######################################" + "\n" )
 resultsFile.write( "ElectionBuster Scan Results: " + "\n" )
 resultsFile.write( "######################################" + "\n" )
-resultsFile.write( "INPUTS = " + str(fName) + ", " + str(mName) + ", " + str(lName) + ", " + str(year) + ", " + str(position) + ", " + str(altPosition) + ", " + str(stateText) + "\n" )
+resultsFile.write( "INPUTS = " + str(fName) + ", " + str(mName) + ", " + str(lName) + ", " + str(year) + ", " + str(position) + ", " + str(altPosition) + ", " + str(stateText) + ", " + str(party) + "\n" )
 
 resultsFile.write( "Total runtime was " + str(totalRuntime) + "\n" )
 resultsFile.write( "There were " + str(len(confirmedURLs)) + " positive results." + "\n" )
