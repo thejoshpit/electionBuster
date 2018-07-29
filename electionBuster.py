@@ -22,10 +22,18 @@ import argparse
 import socket
 from datetime import date
 import urllib 
-from multiprocessing import Pool as ThreadPool 
+from multiprocessing import Pool as ThreadPool, Manager 
 import collections
 import csv
 import operator
+
+
+ 
+confirmedURLs = Manager().list() 
+testedURLs = Manager().list() 
+allURLS = Manager().list() 
+
+
 
 class NameDenormalizer(object):
 	def __init__(self, filename=None):
@@ -68,6 +76,7 @@ def tryURL(url) :
 	
 def tryURLforReal(url) : 
 	fetchResult = ""
+	global confirmedURLs, testedURLs
 	if url not in testedURLs :
 		testedURLs.append(url)
 		try: 
@@ -320,9 +329,6 @@ alphabet = "abcdefghijklmnopqrstuvwxyz0123456789"
 #sometimes "y" because it makes kevin angry 
 vowels = "aeiouy"
 
-confirmedURLs = []
-testedURLs = []
-allURLS = []
 
 ## Other alphabets are defined as a quick way of doing URL mangling. 
 ## Is this a candidate for deletion? 
@@ -636,7 +642,7 @@ print( ' Total URLS: ' + str(len(allURLS)) + "\n" )
 allURLS = removeDups( allURLS ) 
 print( 'Unique URLS: ' + str(len(allURLS)) + "\n" )
 
-pool = ThreadPool(64)
+pool = ThreadPool( 24 )
 
 # Open the urls in their own threads
 # and return the results
@@ -659,20 +665,21 @@ resultsFile.write( "ElectionBuster Scan Results: " + "\n" )
 resultsFile.write( "######################################" + "\n" )
 resultsFile.write( "INPUTS = " + str(fName) + ", " + str(lName) + ", " + str(year) + ", " + str(electionType) + ", " + str(stateText) + "\n" )
 resultsFile.write( "Total runtime was " + str(totalRuntime) + "\n" )
-#resultsFile.write( "There were " + str(len(confirmedURLs)) + " positive results." + "\n" )
-#resultsFile.write( "There were " + str(len(testedURLs)) + " unique URLs tested." + "\n" )
-#resultsFile.write( "-------------------------------------" + "\n" )
-#resultsFile.write( "Positive results: " + "\n" )
-#resultsFile.write( "-------------------------------------" + "\n" )
-#for url in confirmedURLs:
-#	resultsFile.write( str(url) + "\n" )
+resultsFile.write( "There were " + str(len(confirmedURLs)) + " positive results." + "\n" )
+resultsFile.write( "There were " + str(len(testedURLs)) + " unique URLs tested." + "\n" )
+resultsFile.write( "-------------------------------------" + "\n" )
+resultsFile.write( "Positive results: " + "\n" )
+resultsFile.write( "-------------------------------------" + "\n" )
+for url in confirmedURLs:
+	resultsFile.write( str(url) + "\n" )
 resultsFile.write( "\n" )
 resultsFile.write( "-------------------------------------" + "\n" )
 resultsFile.write( "EOF " + "\n" )
-for url in allURLS:
-	resultsFile.write( str(url) + "\n" )
+#for url in allURLS:
+#	resultsFile.write( str(url) + "\n" )
+#	print( str( url ) + "\n" )
 	
-###### Print final results to screen ###########			
+###### Print final results to screen ###########	 		
 print( "###################################### " + "\n" )
 print( "ElectionBuster Scan Results: " + "\n" )
 print( "###################################### " + "\n" )
@@ -685,14 +692,14 @@ print( "Election type: " + electionType + "\n" )
 print( "-------------------------------------" + "\n" )
 print( "Total runtime was " + str(totalRuntime) + "\n" )
 print( "-------------------------------------" + "\n" )
-## TODO: Currently not displayed due to bug 
+ 
 print( "Positive results: " + "\n" )
 print( "There were " + str(len(confirmedURLs)) + " hits:" + "\n" )
 print( "-------------------------------------" + "\n" )
 print( "\n" )
-#for url in confirmedURLs:
-#	print( url )
-#print( "\n" )
+for url in confirmedURLs:
+	print( url )
+print( "\n" )
 
 
 # Bad things happen if these files are not properly closed
