@@ -14,6 +14,8 @@
 ## 5: The state or region the candidate is from (optional)
 ##################################################
 
+#TODO: Add a keyboard interrupt
+
 import requests 
 import sys
 import time
@@ -26,12 +28,14 @@ from multiprocessing import Pool as ThreadPool, Manager
 import collections
 import csv
 import operator
-
+from modules.utils import genAllDonate,genAll,generate_urls, tryURLforReal
+from modules.text_tools import alphabet,alt_alphabets,skipLetter,stringAndStrip,removeDups,reverseLetter,wrongVowel,tlds
 
  
 confirmedURLs = Manager().list() 
-testedURLs = Manager().list() 
+
 allURLS = Manager().list() 
+
 
 
 
@@ -63,137 +67,7 @@ class NameDenormalizer(object):
 start_time = time.time()
 
 # Function: casts and removes those pesky \r and \n
-def stringAndStrip(input): 
-	input = str(input)
-	input =  input.rstrip()
-	return input
 
-def tryURL(url) :
-	url = stringAndStrip(url)
-	for domain_name in tlds:
-		print('Trying: ' + url + domain_name )
-		allURLS.append( url + domain_name )
-	
-def tryURLforReal(url) : 
-	fetchResult = ""
-	global confirmedURLs, testedURLs
-	if url not in testedURLs :
-		testedURLs.append(url)
-		try: 
-			#Open input URL
-			httpResponse = requests.get(url, timeout=10)
-			fetchResult =               "*************************************************+" + "\n" 
-			fetchResult = fetchResult + "Page Exists: " + httpResponse.url + "\n"
-			fetchResult = fetchResult + str(url) + ", " + str(httpResponse.status_code) + "\n"
-			fetchResult = fetchResult + str(httpResponse.headers) + "\n"
-			fetchResult = fetchResult + "*************************************************+" + "\n"
-			print(fetchResult)
-			confirmedURLs.append(url)
-
-			return fetchResult 
-		except requests.exceptions.RequestException as e:    # This is the correct syntax
-                    pass
-		except socket.timeout as e:
-                    pass
-	return fetchResult
-
-def removeDups(numbers):
-    newlist = []
-    for number in numbers:
-       if number not in newlist:
-           newlist.append(number)
-    return newlist
-
-def gen(website_name, alt_alphabet):
-        A = 'abcdefghijklmnopqrstuvwxyz1234567890' # original alphabet string
-        xform = str.maketrans(A, alt_alphabet)
-        s = website_name.translate(xform)
-        return s
-
-def genAll(website_names, alphabets):
-	results = []
-	for s in website_names:
-		for a in alphabets:
-			mangled_name = gen(s, a)
-			results.append( mangled_name )
-	return results
-
-def genAllDonate(website_names, alphabets):
-	results = []
-	for s in website_names:
-		for a in alphabets:
-			mangled_name = gen(s, a)
-			results.append( mangled_name + 'donate' )
-	return results
-
-# This function returns strings with each character missing
-#['oshua', 'jshua', 'johua', 'josua', 'josha', 'joshu']
-def skipLetter(s):
-        kwds = []
-
-        for i in range(1, len(s)+1):
-            kwds.append(s[:i-1] + s[i:])
-        return kwds
-
-# This function subsitutes the wrong vowell for each letter
-#'aoshua', 'boshua', 'coshua', 'doshua'
-def wrongVowel(s):
-        kwds = []
-        for i in range(0, len(s)):
-            for letter in vowels:
-                if s[i] in vowels:
-                    for vowel in vowels:
-                        s_list = list(s)
-                        s_list[i] = vowel
-                        kwd = "".join(s_list)
-                        kwds.append(kwd)
-        return kwds
-
-# This function inserts each alphabetic character into each place in a word
-#['ajoshua', 'jjoshua', 'jooshua', 'josshua', 'joshhua', 'joshuua', 'joshuaa']
-def doubleLetter(s):
-        kwds = []
-        for i in range(0, len(s)+1):
-            kwds.append(s[:i] + s[i-1] + s[i:])
-
-        return kwds
-
-# This function inserts each alphabetic character into each place in a word
-#'jaoshua', 'jnoshua', 'josthua', 'joshuza', 'joshua2'
-def insertLetter(s):
-       
-        kwds = []
-
-        for i in range(0, len(s)):
-            for char in alphabet:
-                kwds.append(s[:i+1] + char + s[i+1:])
-
-        return kwds
-
-# This function reverses each letter
-#['ojshua', 'jsohua', 'johsua', 'josuha', 'joshau']
-def reverseLetter(s):
-        kwds = []
-        for i in range(0, len(s)):
-            letters = s[i-1:i+1:1]
-            if len(letters) != 2:
-                continue
-
-            reverse_letters = letters[1] + letters[0]
-            kwds.append(s[:i-1] + reverse_letters + s[i+1:])
-
-        return kwds
-        
-#'aoshua', josh9a', 'josqua', 'jzshua'        
-def substitution(s):
-        kwds = []
-
-        for i in range(0, len(s)):
-            for letter in alphabet:
-                kwd = s[:i] + letter + s[i+1:]
-                kwds.append(kwd)
-                
-        return kwds      
 
 #Parse command line arguments
 parser = argparse.ArgumentParser(description='Identifies registered candidate domains')
@@ -269,7 +143,7 @@ else :
 	
 # top-level domain-names
 # # consider removing .me, .info, and .biz if they aren't adding value 
-tlds = ['.com', '.net', '.me' , '.org', '.net', '.biz', '.info', '.us', '.cm' ]
+
 
 # Runs stringAndStrip on everything except fileName b/c that's used elsewhere
 fName = stringAndStrip(fName)
@@ -323,12 +197,6 @@ resultsFile.close()
 
 resultsFile = open(tempResults, "a")
 
-# Need a base alphabet for the first set of mangling functions
-alphabet = "abcdefghijklmnopqrstuvwxyz0123456789"
-
-#sometimes "y" because it makes kevin angry 
-vowels = "aeiouy"
-
 
 ## Other alphabets are defined as a quick way of doing URL mangling. 
 ## Is this a candidate for deletion? 
@@ -344,236 +212,27 @@ vowels = "aeiouy"
 # 8: e -> 3 "Ee to three"
 # 9: 3 -> e "Three to ee"
 
-alt_alphabets = [ 	'abcdefghijklmnopqrstuvwxyz1234567890',
-			'abcdefgh1jklmnopqrstuvwxyz1234567890',
-			'abcdefghijkimnopqrstuvwxyz1234567890',
-			'abcdefghljklmnopqrstuvwxyz1234567890',
-			'abcdefghijklmn0pqrstuvwxyz1234567890',
-			'abcdefghijklmnopqrstuvwxyz123456789o',
-			'abcdefghijklmmopqrstuvwxyz1234567890',
-			'abcdefghijklnnopqrstuvwxyz1234567890',
-			'abcd3fghijklmnopqrstuvwxyz1234567890',
-			'Аbcdefghijklmnopqrstuvwxyz1234567890', # homographic Cyrillic А
-			'аbcdefghijklmnopqrstuvwxyz1234567890', # homographic Cyrillic а
-			'Ӓbcdefghijklmnopqrstuvwxyz1234567890', # homographic Cyrillic Ӓ 
-			'ӓbcdefghijklmnopqrstuvwxyz1234567890', # homographic Cyrillic ӓ 
-			'Αbcdefghijklmnopqrstuvwxyz1234567890', # homographic Greek Α
-			'abcdefghijklmnОpqrstuvwxyz1234567890', # homographic Cyrillic О
-			'abcdefghijklmnоpqrstuvwxyz1234567890', # homographic Cyrillic о   
-			'abcdefghijklmnоpqrstuvwxyz1234567890', # homographic Greek о  
-			'abcdefghijklmnopqrsΤuvwxyz1234567890',	# homographic Greek Τ  
-			'abcdefghijklmnopqrsТuvwxyz1234567890',	# homographic Cyrillic Т	
-			'abcdefghijklΜnopqrstuvwxyz1234567890',	# homographic Greek Μ	
-			'abcdefghijklМnopqrstuvwxyz1234567890',	# homographic Cyrillic М	
-			'abcdefghijklmnoРqrstuvwxyz1234567890',	# homographic Cyrillic Р
-			'abcdefghijklmnoРqrstuvwxyz1234567890',	# homographic Cyrillic Р		
-			'abcdefghijklmnopqrstuvwxyz12e4567890']
 
 # These are the template that we'll use based on the optional input parameters. 
 # The first one is if the state was input. 
-templates = []
-if (args.state) : 
-	templates.append( fName + lName )
-	templates.append( fName + '-' + lName )
-	templates.append( lName + fName )
-	templates.append( lName + '-' + fName )
-	templates.append( fName + year )
-	templates.append( fName + shortYear )
-	templates.append( lName + year )
-	templates.append( lName + shortYear )	
-	templates.append( fName + lName + year )
-	templates.append( fName + lName + shortYear )	
-	templates.append( fName + '-' + lName + year )
-	templates.append( fName + '-' + lName + shortYear )	
-	for stateAlias in state:
-		templates.append( fName + lName + 'for' + stateAlias )
-		templates.append( fName + lName + 'for' + stateAlias + year)
-		templates.append( fName + lName + 'for' + stateAlias + shortYear)	
-		templates.append( lName + 'for' + stateAlias )
-		templates.append( lName + 'for' + stateAlias + year)
-		templates.append( lName + 'for' + stateAlias + shortYear)
-		templates.append( fName + 'for' + stateAlias )
-		templates.append( fName + 'for' + stateAlias + year)
-		templates.append( fName + 'for' + stateAlias + shortYear)
-		templates.append( fName + '-' + lName + 'for' + stateAlias )
-		templates.append( fName + lName + '4' + stateAlias )
-		templates.append( fName + '-' + lName + '4' + stateAlias )
-		templates.append( fName + lName + stateAlias )
-		templates.append( fName + '-' + lName + stateAlias )
-	templates.append( fName + lName + 'for' + position )
-	templates.append( fName + '-' + lName + 'for' + position )
-	templates.append( fName + lName + '4' + position )
-	templates.append( fName + '-' + lName + '4' + position )
-	templates.append( fName + 'for' + position )
-	templates.append( fName + '4' + position )
-	templates.append( fName + 'for' + position + year )
-	templates.append( fName + 'for' + position + shortYear )
-	templates.append( fName + '4' + position + year )
-	templates.append( fName + '4' + position + shortYear )	
-	templates.append( position + fName + lName )
-	templates.append( position + '-' + fName + lName )
-	templates.append( position + fName + '-' + lName )
-	templates.append( position + '-' + fName + '-' + lName )
-	templates.append( fName + lName + 'for' + altPosition )
-	templates.append( fName + lName + '4' + altPosition )
-	templates.append( fName + 'for' + altPosition )
-	templates.append( fName + '4' + altPosition )
-	templates.append( lName + 'for' + altPosition )
-	templates.append( lName + 'for' + position )
-	templates.append( lName + '4' + position )
-# This one is for middle name only 
-if (args.middleName):  
-	templates.append( fName + lName )
-	templates.append( fName + mName + lName )
-	templates.append( fName + middleInitial + lName )
-	templates.append( fName + '-' + lName )
-	templates.append( lName + fName )
-	templates.append( lName + '-' + fName )
-	templates.append( fName + year )
-	templates.append( lName + year )
-	templates.append( fName + lName + year )
-	templates.append( fName + '-' + lName + year )
-	templates.append( fName + lName + 'for' + position )
-	templates.append( fName + '-' + lName + 'for' + position )
-	templates.append( fName + lName + '4' + position )
-	templates.append( fName + '-' + lName + '4' + position )
-	templates.append( fName + mName + 'for' + position )
-	templates.append( fName + mName + year)
-	templates.append( fName + middleInitial + year )
-	templates.append( fName + mName + 'for' + position + year)
-	templates.append( fName + middleInitial + 'for' + position + year )
-	templates.append( fName + middleInitial + 'for' + position )
-	templates.append( fName + 'for' + position )
-	templates.append( fName + '4' + position )
-	templates.append( fName + 'for' + position + year )
-	templates.append( fName + '4' + position + year )
-	templates.append( position + fName + lName )
-	templates.append( position + '-' + fName + lName )
-	templates.append( position + fName + '-' + lName )
-	templates.append( position + '-' + fName + '-' + lName )
-	templates.append( fName + lName + 'for' + altPosition )
-	templates.append( fName + lName + '4' + altPosition )
-	templates.append( fName + 'for' + altPosition )
-	templates.append( fName + '4' + altPosition )
-	templates.append( lName + 'for' + altPosition )
-	templates.append( lName + 'for' + position )
-	templates.append( lName + '4' + position )
-#This one is middle name and state 
-if (args.middleName and args.state):  
-	templates.append( fName + lName )
-	templates.append( fName + mName + lName )
-	templates.append( fName + middleInitial + lName )
-	templates.append( fName + '-' + lName )
-	templates.append( lName + fName )
-	templates.append( lName + '-' + fName )
-	templates.append( fName + year )
-	templates.append( fName + shortYear )
-	templates.append( lName + year )
-	templates.append( lName + shortYear )
-	templates.append( fName + lName + year )
-	templates.append( fName + lName + shortYear )	
-	templates.append( fName + '-' + lName + year )
-	templates.append( fName + '-' + lName + shortYear )	
-	for stateAlias in state:
-		templates.append( fName + lName + 'for' + stateAlias )
-		templates.append( fName + lName + 'for' + stateAlias + year)
-		templates.append( fName + lName + 'for' + stateAlias + shortYear)	
-		templates.append( lName + 'for' + stateAlias )
-		templates.append( lName + 'for' + stateAlias + year)
-		templates.append( lName + 'for' + stateAlias + shortYear)
-		templates.append( fName + '-' + lName + 'for' + stateAlias )
-		templates.append( fName + lName + '4' + stateAlias )
-		templates.append( fName + '-' + lName + '4' + stateAlias )
-		templates.append( fName + lName + stateAlias )
-		templates.append( fName + '-' + lName + stateAlias )
-	templates.append( fName + lName + 'for' + position )
-	templates.append( fName + '-' + lName + 'for' + position )
-	templates.append( fName + lName + '4' + position )
-	templates.append( fName + '-' + lName + '4' + position )
-	templates.append( fName + mName + 'for' + position )
-	templates.append( fName + mName + year)
-	templates.append( fName + mName + shortYear)	
-	templates.append( fName + middleInitial + year )
-	templates.append( fName + middleInitial + shortYear )	
-	templates.append( fName + mName + 'for' + position + year)
-	templates.append( fName + mName + 'for' + position + shortYear)	
-	templates.append( fName + middleInitial + 'for' + position + year )
-	templates.append( fName + middleInitial + 'for' + position + shortYear )	
-	templates.append( fName + middleInitial + 'for' + position )
-	templates.append( fName + 'for' + position )
-	templates.append( fName + '4' + position )
-	templates.append( fName + 'for' + position + year )
-	templates.append( fName + 'for' + position + shortYear )	
-	templates.append( fName + '4' + position + year )
-	templates.append( fName + '4' + position + shortYear )	
-	templates.append( position + fName + lName )
-	templates.append( position + '-' + fName + lName )
-	templates.append( position + fName + '-' + lName )
-	templates.append( position + '-' + fName + '-' + lName )
-	templates.append( fName + lName + 'for' + altPosition )
-	templates.append( fName + lName + '4' + altPosition )
-	templates.append( fName + 'for' + altPosition )
-	templates.append( fName + '4' + altPosition )
-	templates.append( lName + 'for' + altPosition )
-	templates.append( lName + 'for' + position )
-	templates.append( lName + '4' + position )
-#this one is the least number of parameters, just the basics 
-templates.append( fName + lName )
-templates.append( fName + '-' + lName )
-templates.append( lName + fName )
-templates.append( lName + '-' + fName )
-templates.append( fName + year )
-templates.append( fName + shortYear )
-templates.append( lName + year )
-templates.append( lName + shortYear )
-templates.append( fName + lName + year )
-templates.append( fName + lName + shortYear )
-templates.append( fName + '-' + lName + year )
-templates.append( fName + '-' + lName + shortYear )	
-templates.append( fName + lName + 'for' + position )
-templates.append( fName + '-' + lName + 'for' + position )
-templates.append( fName + lName + '4' + position )
-templates.append( fName + '-' + lName + '4' + position )
-templates.append( fName + 'for' + position )
-templates.append( fName + '4' + position )
-templates.append( fName + 'for' + position + year )
-templates.append( fName + 'for' + position + shortYear )
-templates.append( fName + '4' + position + year )
-templates.append( fName + '4' + position + shortYear )	
-templates.append( fName + 'for' + position + year )
-templates.append( lName + 'for' + position + shortYear )
-templates.append( lName + '4' + position + year )
-templates.append( lName + '4' + position + shortYear )
-templates.append( position + fName + lName )
-templates.append( position + '-' + fName + lName )
-templates.append( position + fName + '-' + lName )
-templates.append( 'vote' + fName )
-templates.append( 'vote' + lName )
-templates.append( 'votefor' + fName )
-templates.append( 'votefor' + lName )
-templates.append( 'votefor' + fName + lName )
-templates.append( 'vote4' + fName )
-templates.append( 'vote4' + lName )
-templates.append( 'vote4' + fName + lName )
-templates.append( position + '-' + fName + '-' + lName )
-templates.append( fName + lName + 'for' + altPosition )
-templates.append( fName + lName + '4' + altPosition )
-templates.append( fName + 'for' + altPosition )
-templates.append( fName + '4' + altPosition )
-templates.append( lName + 'for' + altPosition )
-templates.append( lName + 'for' + position )
-templates.append( lName + '4' + position )
+templates = generate_urls(first_name=args.firstName,
+						  last_name=args.lastName,
+						  state=state,
+						  middlename=args.middleName,
+						  position=position,
+						  altPosition=altPosition,
+						  year=args.year)
 
 
 # This generates the text mangling
-results = genAll( templates, alt_alphabets)
+results = genAll(templates, alt_alphabets)
 
 # This generates the text mangling with some other alternatives
-resultsDonate = genAllDonate( templates, alt_alphabets)
+resultsDonate = genAllDonate(templates, alt_alphabets)
 
 #### LOOP 1 ####
 # All examples use the input of 'josh franklin 2014 president DC' 
-##################
+#################
 #http://www.joshfranklin.com
 #http://www.josh2014.com
 #http://www.franklin2014.com
@@ -593,10 +252,17 @@ resultsDonate = genAllDonate( templates, alt_alphabets)
 #http://www.presidentjoshfranklin4president2014.com
 #http://www.presidentjosh-franklin4president2014.com
 
+def tryURL(url):
+	url = stringAndStrip(url)
+	for domain_name in tlds:
+		print('Trying: ' + url + domain_name)
+		allURLS.append(url + domain_name)
+
+
 print("Entering template loop 1^^^^^^^^^^^^^^^^^^^^^^^^^^" )
 print(time.time() - start_time, "seconds")
 for r in results:
-	tryURL( 'http://www.' + r )
+	tryURL( 'http://www.' + r , )
 
 ### LOOP 2 ###
 # Puts donate at the beginning & 
